@@ -1,7 +1,3 @@
-Here's the updated README with instructions for installing Python, pip, and phpMyAdmin on Windows:
-
----
-
 # Product Management System
 
 Welcome to the Product Management System! This system allows administrators to manage products and display them to the public.
@@ -29,6 +25,7 @@ Welcome to the Product Management System! This system allows administrators to m
      ```
 
 ### 2. Install phpMyAdmin
+skip 1 to 4 if you are using xampp
 1. **Download phpMyAdmin:**
    - Go to the [phpMyAdmin official website](https://www.phpmyadmin.net/).
    - Download the latest version of phpMyAdmin for Windows.
@@ -53,14 +50,14 @@ Welcome to the Product Management System! This system allows administrators to m
 Clone the repository from GitHub:
 
 ```bash
-git clone https://github.com/your_username/product-management-system.git
+git clone https://github.com/sandeshPatel06/shop-harshStudio.git
 ```
 
 ### 4. Set Up Virtual Environment
 Navigate to the project directory:
 
 ```bash
-cd product-management-system
+cd shop-harshstudio
 ```
 
 Create a virtual environment:
@@ -74,7 +71,7 @@ python -m venv venv
 Activate the virtual environment:
 
 ```bash
-.\venv\Scripts\activate
+.\venv\Scripts\activate.ps1
 ```
 
    
@@ -158,3 +155,8 @@ CREATE TABLE products (
 ---
 
 By following these steps, you should be able to set up, configure, and run your Product Management System on Windows using Python 3 and phpMyAdmin.
+
+
+
+
+
