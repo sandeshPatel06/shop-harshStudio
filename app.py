@@ -33,7 +33,10 @@ def login():
         password = request.form['password']
 
         # Check if the credentials are correct (static for demonstration)
-        if username == 'admin' and password == '1234':
+        if username == 'Harsh' and password == '5654':
+            session['logged_in'] = True
+            return redirect('/admin')
+        elif username == 'sandesh' and password == '9399':
             session['logged_in'] = True
             return redirect('/admin')
         else:
