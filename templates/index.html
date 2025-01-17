@@ -190,6 +190,98 @@
         .container img {
             max-width: 50%;;
         }
+        /* Footer Styling */
+.footer {
+    background-color: #003d80;
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-container div {
+    flex: 1;
+    margin: 10px;
+}
+
+.footer-about,
+.footer-links,
+.footer-contact,
+.footer-social {
+    padding: 10px;
+}
+
+.footer h4 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #ff5722;
+}
+
+.footer p {
+    margin: 0 0 10px;
+    line-height: 1.8;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links ul li {
+    margin: 8px 0;
+}
+
+.footer-links ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links ul li a:hover {
+    color: #ff5722;
+}
+
+.footer-contact p i {
+    margin-right: 8px;
+}
+
+.footer-social a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 1.8rem;
+    transition: color 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: #ff5722;
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    border-top: 1px solid #ccc;
+    padding-top: 15px;
+    font-size: 0.9rem;
+}
+
+.footer-bottom a {
+    color: #ff5722;
+    text-decoration: none;
+}
+
+.footer-bottom a:hover {
+    text-decoration: underline;
+}
+
     </style>
 </head>
 
@@ -251,6 +343,47 @@
             document.getElementById('productDetailsModal').style.display = "none";
         }
     </script>
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Footer About Section -->
+            <div class="footer-about">
+                <h4>About Us</h4>
+                <p>e-Learning Platform is dedicated to providing high-quality courses to help you enhance your skills and achieve your career goals. Join us to start learning today!</p>
+            </div>
+    
+            <!-- Footer Navigation Links -->
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#" onclick="showCoursePage()">Courses</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="https://wa.me/9399613606">Contact Us</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+    
+            <!-- Footer Contact Info -->
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
+                <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
+                <p><i class="fas fa-map-marker-alt"></i> 420 kareli St, MP narsinghpur, india</p>
+            </div>
+    
+            <!-- Footer Social Media Links -->
+            <div class="footer-social">
+                <h4>Follow Us</h4>
+                <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.linkedin.com/in/sandesh-patel07?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.instagram.com/sandesh_patel007?igsh=MXVjd3JreWNkMzBsYg==" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    
+        <div class="footer-bottom">
+            <p>&copy; 2024 e-Learning Platform. All Rights Reserved | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
 </body>
 
 </html>
