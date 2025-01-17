@@ -274,7 +274,8 @@ h1 {
 /* Footer Columns */
 .footer-column {
     flex: 1;
-    max-height: 200px;
+    min-width: 200px;
+    
 }
 
 .footer-column h4 {
