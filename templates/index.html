@@ -189,114 +189,114 @@
         }
 
         .container img {
-            max-width: 50%;;
+            max-width: 50%;
+            ;
         }
-<<<<<<< HEAD
-=======
+
+        <<<<<<< HEAD=======
+
         /* Footer Styling */
-.footer {
-    color: white;
-    padding: 60px 0;
-    text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background:read;
-}
+        .footer {
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: read;
+        }
 
-.footer-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    max-width: 1200px;
-    margin: 0 auto;
-}
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-.footer-container div {
-    flex: 1;
-    margin: 10px;
-}
+        .footer-container div {
+            flex: 1;
+            margin: 10px;
+        }
 
-.footer-about,
-.footer-links,
-.footer-contact,
-.footer-social {
-    padding: 10px;
-}
+        .footer-about,
+        .footer-links,
+        .footer-contact,
+        .footer-social {
+            padding: 10px;
+        }
 
-.footer h4 {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: #ff5722;
-}
+        .footer h4 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #ff5722;
+        }
 
-.footer p {
-    margin: 0 0 10px;
-    line-height: 1.8;
-}
+        .footer p {
+            margin: 0 0 10px;
+            line-height: 1.8;
+        }
 
-.footer-links ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-.footer-links ul li {
-    margin: 8px 0;
-}
+        .footer-links ul li {
+            margin: 8px 0;
+        }
 
-.footer-links ul li a {
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
+        .footer-links ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
 
-.footer-links ul li a:hover {
-    color: #ff5722;
-}
+        .footer-links ul li a:hover {
+            color: #ff5722;
+        }
 
-.footer-contact p i {
-    margin-right: 8px;
-}
+        .footer-contact p i {
+            margin-right: 8px;
+        }
 
-.footer-social a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
-    font-size: 1.8rem;
-    transition: color 0.3s ease;
-}
+        .footer-social a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 1.8rem;
+            transition: color 0.3s ease;
+        }
 
-.footer-social a:hover {
-    color: #ff5722;
-}
+        .footer-social a:hover {
+            color: #ff5722;
+        }
 
-.footer-bottom {
-    margin-top: 40px;
-    border-top: 1px solid #ccc;
-    padding-top: 15px;
-    font-size: 0.9rem;
-}
+        .footer-bottom {
+            margin-top: 40px;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            font-size: 0.9rem;
+        }
 
-.footer-bottom a {
-    color: #ff5722;
-    text-decoration: none;
-}
+        .footer-bottom a {
+            color: #ff5722;
+            text-decoration: none;
+        }
 
-.footer-bottom a:hover {
-    text-decoration: underline;
-}
-
->>>>>>> 0cc21fe99661bf40399530d799e70d0cec36f358
+        .footer-bottom a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
 <body>
     <!-- Navigation bar -->
     <nav class="navbar">
-<<<<<<< HEAD
+
         <a class="navbar-brand" href="#"><b>MOVEMENT_MAKERS <b></a>
-=======
-       
->>>>>>> 0cc21fe99661bf40399530d799e70d0cec36f358
+
+
+
         <a href="/" class="active">Home</a>
         <a href="/login">Admin Login</a>
     </nav>
@@ -329,78 +329,77 @@
             <div id="productDetailsContent"></div>
         </div>
     </div>
-<<<<<<< HEAD
-    
-=======
->>>>>>> 0cc21fe99661bf40399530d799e70d0cec36f358
+    <<<<<<< HEAD=======>>>>>>> 0cc21fe99661bf40399530d799e70d0cec36f358
 
-    <script>
-        // Function to handle showing product details modal
-        function showProductDetails(name, imagePath, description, price) {
-            // Set the product details in the modal
-            var modalContent = `
+        <script>
+            // Function to handle showing product details modal
+            function showProductDetails(name, imagePath, description, price) {
+                // Set the product details in the modal
+                var modalContent = `
                 <img src="static/${imagePath}" alt="${name}">
                 <h3>${name}</h3>
                 <p><strong>Price:</strong> $${price}</p>
                 <p>${description}</p>
                 <p><strong>WhatsApp:</strong> <a href="https://wa.me/+919399613606?text=Name:${name}%0APrice:${price}%0ADetails:${description}" target="_blank">+919399613606</a></p>
             `;
-            document.getElementById('productDetailsContent').innerHTML = modalContent;
-            // Show the modal
-            document.getElementById('productDetailsModal').style.display = "block";
-        }
+                document.getElementById('productDetailsContent').innerHTML = modalContent;
+                // Show the modal
+                document.getElementById('productDetailsModal').style.display = "block";
+            }
 
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById('productDetailsModal').style.display = "none";
-        }
-    </script>
-<<<<<<< HEAD
-=======
-    <footer class="footer">
-        <div class="footer-container">
-            <!-- Footer About Section -->
-            <div class="footer-about">
-                <h4>About Us</h4>
-                <p>We Always try provide Best qulity of Frames , Glass and Phoots</p>
+            // Function to close the modal
+            function closeModal() {
+                document.getElementById('productDetailsModal').style.display = "none";
+            }
+        </script>
+        <<<<<<< HEAD=======<footer class="footer">
+            <div class="footer-container">
+                <!-- Footer About Section -->
+                <div class="footer-about">
+                    <h4>About Us</h4>
+                    <p>We Always try provide Best qulity of Frames , Glass and Phoots</p>
+                </div>
+
+                <!-- Footer Navigation Links -->
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#" onclick="showCoursePage()">Courses</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="https://wa.me/9399613606">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Contact Info -->
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
+                    <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 420 kareli St, MP narsinghpur, india</p>
+                </div>
+
+                <!-- Footer Social Media Links -->
+                <div class="footer-social">
+                    <h4>Follow Us</h4>
+                    <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" class="social-icon"><i
+                            class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com/in/sandesh-patel07?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                        class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.instagram.com/sandesh_patel007?igsh=MXVjd3JreWNkMzBsYg=="
+                        class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-    
-            <!-- Footer Navigation Links -->
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#" onclick="showCoursePage()">Courses</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="https://wa.me/9399613606">Contact Us</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Studio Platform. All Rights Reserved | <a href="#">Privacy Policy</a> | <a href="#">Terms
+                        of Service</a></p>
             </div>
-    
-            <!-- Footer Contact Info -->
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
-                <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
-                <p><i class="fas fa-map-marker-alt"></i> 420 kareli St, MP narsinghpur, india</p>
-            </div>
-    
-            <!-- Footer Social Media Links -->
-            <div class="footer-social">
-                <h4>Follow Us</h4>
-                <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" class="social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.linkedin.com/in/sandesh-patel07?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                <a href="https://www.instagram.com/sandesh_patel007?igsh=MXVjd3JreWNkMzBsYg==" class="social-icon"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    
-        <div class="footer-bottom" >
-            <p>&copy; 2025 Studio Platform. All Rights Reserved | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-        </div>
-        
-    
-    </footer>
->>>>>>> 0cc21fe99661bf40399530d799e70d0cec36f358
+
+
+            </footer>
+
 </body>
 
 </html>
