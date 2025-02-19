@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session , jsonify
 import os
 import mysql.connector
 from werkzeug.utils import secure_filename
@@ -166,7 +166,7 @@ def add_to_cart(product_id):
     
     if 'cart' not in session:
         session['cart'] = {}
-    
+
     cart = session['cart']
     if str(product_id) in cart:
         cart[str(product_id)]['quantity'] += 1
@@ -179,6 +179,21 @@ def add_to_cart(product_id):
 @app.route('/cart')
 def cart():
     return render_template('cart.html', cart=session.get('cart', {}))
+@app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
+def remove_from_cart(product_id):
+    if 'cart' in session and str(product_id) in session['cart']:
+        del session['cart'][str(product_id)]  # Remove product from cart
+        session.modified = True
+        return jsonify({'message': 'Product removed from cart', 'cart': session['cart']})
+    
+    return jsonify({'message': 'Product not found in cart'}), 404
+
+@app.route('/clear_cart', methods=['POST'])
+def clear_cart():
+    session.pop('cart', None)
+    
+    return render_template('cart.html', cart=session.get('cart', {}))
+
 
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
