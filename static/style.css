@@ -59,13 +59,8 @@ h1 {
   justify-content: space-between;
 }
 
-.navbar-container {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+
+
 
 /* Logo */
 .navbar-logo {
@@ -491,3 +486,460 @@ h1 {
 .footer-bottom a:hover {
   text-decoration: underline;
 }
+
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5; /* Light grey background for the whole page */
+  color: #333; /* Dark grey text color */
+  margin: 0;
+  padding: 0;
+}
+
+/* Dark Theme Styles */
+body.dark-theme {
+  background-color: #121212; /* Dark background for dark theme */
+  color: #f5f5f5; /* Light text color for dark theme */
+}
+
+h1 {
+  text-align: center;
+  color: #4caf50; /* Green text color for headings */
+  margin-bottom: 40px;
+  font-size: 28px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff; /* White background for the container */
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Light shadow for the container */
+}
+
+/* Container Styles for Dark Theme */
+body.dark-theme .container {
+  background-color: #1e1e1e; /* Darker background for the container in dark theme */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Light shadow for dark theme container */
+}
+
+/* Navigation Bar */
+.navbar {
+  background-color: #ffffff; /* White background for the navbar */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for the navbar */
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Navbar Styles for Dark Theme */
+body.dark-theme .navbar {
+  background-color: #333333; /* Dark background for the navbar in dark theme */
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1); /* Light shadow for dark theme navbar */
+}
+
+.navbar-logo {
+  height: 40px;
+  margin-right: 10px; /* Space between the logo and the rest of the navbar items */
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0 15px; /* Space between navbar links */
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #333; /* Dark grey text color for links */
+  font-weight: 500;
+  transition: color 0.3s; /* Smooth color transition on hover */
+  padding: 14px 16px;
+  font-size: 17px;
+}
+
+/* Navbar Links for Dark Theme */
+body.dark-theme .navbar-links a {
+  color: #f5f5f5; /* Light text color for links in dark theme */
+}
+
+.navbar-links a.active {
+  background-color: #4caf50; /* Green background for active link */
+  color: white;
+}
+
+.navbar-links a:hover {
+  background-color: #ddd; /* Light grey background on hover */
+  color: rgb(215, 243, 104); /* Light yellow text color on hover */
+}
+
+/* Navbar Links Hover for Dark Theme */
+body.dark-theme .navbar-links a:hover {
+  background-color: #555555; /* Darker background on hover in dark theme */
+  color: #f5f5f5; /* Light text color on hover in dark theme */
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+
+
+
+
+/* Button Styles */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Add to Cart Button */
+.btn.add-to-cart {
+  background-color: #28a745; /* Green background for Add to Cart button */
+}
+
+.btn.add-to-cart:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+/* Buy Now Button */
+.btn.buy-now {
+  background-color: #ff5722; /* Orange background for Buy Now button */
+}
+
+.btn.buy-now:hover {
+  background-color: #e64a19; /* Darker orange on hover */
+}
+
+/* View Details Button */
+.btn.view-details {
+  background-color: #17a2b8; /* Blue background for View Details button */
+}
+
+.btn.view-details:hover {
+  background-color: #138496; /* Darker blue on hover */
+}
+
+/* Button Styles for Dark Theme */
+body.dark-theme .btn {
+  color: #121212; /* Dark text color for buttons in dark theme */
+}
+
+body.dark-theme .btn.add-to-cart {
+  background-color: #66bb6a; /* Lighter green for Add to Cart button in dark theme */
+}
+
+body.dark-theme .btn.add-to-cart:hover {
+  background-color: #4caf50; /* Darker green on hover */
+}
+
+body.dark-theme .btn.buy-now {
+  background-color: #ff8a65; /* Lighter orange for Buy Now button in dark theme */
+}
+
+body.dark-theme .btn.buy-now:hover {
+  background-color: #ff7043; /* Darker orange on hover */
+}
+
+body.dark-theme .btn.view-details {
+  background-color: #4dd0e1; /* Lighter blue for View Details button in dark theme */
+}
+
+body.dark-theme .btn.view-details:hover {
+  background-color: #26c6da; /* Darker blue on hover */
+}
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dark Theme Styles */
+body.dark-theme {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+h1 {
+  text-align: center;
+  color: #4caf50;
+  margin-bottom: 40px;
+  font-size: 28px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .container {
+  background-color: #1e1e1e;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Navigation Bar */
+.navbar {
+  background-color: #007bff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+body.dark-theme .navbar {
+  background-color: #0056b3;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 ;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0 15px;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: color 0.3s;
+  padding: 14px 16px;
+  font-size: 17px;
+}
+
+body.dark-theme .navbar-links a {
+  color: #f5f5f5;
+}
+
+.navbar-links a.active {
+  background-color: #ffca28;
+  color: white;
+  border-radius: 5px;
+}
+
+.navbar-links a:hover {
+  background-color: #ddd;
+  color: #007bff;
+  border-radius: 5px;
+}
+
+body.dark-theme .navbar-links a:hover {
+  background-color: #555;
+  color: #fff;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-search {
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-right: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+body.dark-theme .navbar-search {
+  border-color: #555;
+  background-color: #333;
+  color: #fff;
+}
+
+.navbar-search:focus {
+  border-color: #ffca28;
+}
+
+.navbar-cart {
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+}
+
+body.dark-theme .navbar-cart {
+  color: #f5f5f5;
+}
+
+.navbar-cart i {
+  font-size: 20px;
+}
+
+.cart-count {
+  background-color: #ffca28;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  padding: 2px 6px;
+  position: absolute;
+  top: -5px;
+  right: -10px;
+}
+
+body.dark-theme .cart-count {
+  background-color: #ff5722;
+}
+
+/* Button Styles */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-theme .btn {
+  color: #121212;
+}
+
+.btn.add-to-cart {
+  background-color: #28a745;
+}
+
+.btn.add-to-cart:hover {
+  background-color: #218838;
+}
+
+body.dark-theme .btn.add-to-cart {
+  background-color: #66bb6a;
+}
+
+body.dark-theme .btn.add-to-cart:hover {
+  background-color: #4caf50;
+}
+
+.btn.buy-now {
+  background-color: #ff5722;
+}
+
+.btn.buy-now:hover {
+  background-color: #e64a19;
+}
+
+body.dark-theme .btn.buy-now {
+  background-color: #ff8a65;
+}
+
+body.dark-theme .btn.buy-now:hover {
+  background-color: #ff7043;
+}
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dark Theme Styles */
+body.dark-theme {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+h1 {
+  text-align: center;
+  color: #4caf50;
+  margin-bottom: 40px;
+  font-size: 28px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .container {
+  background-color: #1e1e1e;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Navigation Bar */
+.navbar {
+  background-color: #007bff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+body.dark-theme .navbar {
+  background-color: #0056b3;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+   }

@@ -8,18 +8,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <link rel="shortcut icon" href="/static/uploads/logo.ico" type="image/x-icon" />
     <style>
-        .message-box {
-            padding: 1em;
-            margin: 1em 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f8f8f8;
-            color: #333;
-            display: none;
-        }
+        /* Include the CSS here */
     </style>
 </head>
-<body>
+<body class="light-theme">
     <nav class="navbar">
         <div class="navbar-container">
             <a class="navbar-brand" href="/">
@@ -39,6 +31,7 @@
                     <span class="cart-count">0</span>
                 </a>
             </div>
+            <button id="theme-toggle">Switch Theme</button>
         </div>
     </nav>
 
@@ -51,8 +44,9 @@
                 <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" />
                 <h3>{{ product.name }}</h3>
                 <p><strong>Price:</strong> ${{ product.price }}</p>
-                <button onclick="addToCart('{{ product.id }}')">Add to Cart</button>
-                <button onclick="showProductDetails('{{ product.name }}', '{{ product.image_path }}', '{{ product.description }}', '{{ product.price }}', '{{ product.id }}')">View Details</button>
+                <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+                <button class="btn buy-now" onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">Buy Now</button>
+                <button class="btn view-details" onclick="showProductDetails('{{ product.name }}', '{{ product.image_path }}', '{{ product.description }}', '{{ product.price }}', '{{ product.id }}')">View Details</button>
             </div>
             {% endfor %} {% else %}
             <div class="alert" role="alert">No products available.</div>
@@ -64,10 +58,19 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <div id="productDetailsContent"></div>
-            <button id="modalAddToCartBtn">Add to Cart</button>
+            <button class="btn add-to-cart" id="modalAddToCartBtn">Add to Cart</button>
+            <button class="btn buy-now" id="modalBuyNowBtn" onclick="buyNow(product.id, product.name, product.price)">Buy Now</button>
         </div>
     </div>
-    <div id="messageBox" class="message-box"></div>
+
+    <div id="orderSummaryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeOrderSummaryModal()">&times;</span>
+            <h3>Order Summary</h3>
+            <div id="orderSummaryContent"></div>
+            <button class="btn" onclick="proceedToPayment()">Proceed to Payment</button>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="footer-container">
@@ -105,6 +108,35 @@
         </div>
     </footer>
 
+    <script>
+        // JavaScript for theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+        });
+
+        // Functionality for "Buy Now" button
+        function buyNow(productId, productName, productPrice) {
+            // Display order summary modal with product details
+            document.getElementById('orderSummaryContent').innerHTML = `
+                <p><strong>Product:</strong> ${productName}</p>
+                <p><strong>Price:</strong> $${productPrice}</p>
+                <p><strong>Quantity:</strong> 1</p>
+                <p><strong>Total:</strong> $${productPrice}</p>
+            `;
+            document.getElementById('orderSummaryModal').style.display = 'block';
+        }
+
+        // Close the order summary modal
+        function closeOrderSummaryModal() {
+            document.getElementById('orderSummaryModal').style.display = 'none';
+        }
+
+        // Proceed to payment function
+        function proceedToPayment() {
+            alert('Proceeding to payment...');
+            // Add your payment logic here
+        }
+    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
