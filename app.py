@@ -39,6 +39,9 @@ def login():
         elif username == 'sandesh' and password == '9399':
             session['logged_in'] = True
             return redirect('/admin')
+        elif username == 'ankit' and password == '2004':
+            session['logged_in'] = True
+            return redirect('/admin')
         else:
             return render_template('login.html', error='Invalid username or password')
     return render_template('login.html', error='')
@@ -150,6 +153,32 @@ def delete_product(product_id):
         return redirect('/login')
 
 # Add the rest of the routes and functions as before
+@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
+def add_to_cart(product_id):
+    db = connect_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM products WHERE id = %s', (product_id,))
+    product = cursor.fetchone()
+    db.close()
+    
+    if not product:
+        return jsonify({'message': 'Product not found'}), 404
+    
+    if 'cart' not in session:
+        session['cart'] = {}
+    
+    cart = session['cart']
+    if str(product_id) in cart:
+        cart[str(product_id)]['quantity'] += 1
+    else:
+        cart[str(product_id)] = {'name': product['name'], 'price': product['price'], 'quantity': 1}
+    
+    session.modified = True
+    return jsonify({'message': 'Product added to cart', 'cart': cart})
+
+@app.route('/cart')
+def cart():
+    return render_template('cart.html', cart=session.get('cart', {}))
 
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
