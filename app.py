@@ -152,4 +152,4 @@ def delete_product(product_id):
 # Add the rest of the routes and functions as before
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0')
