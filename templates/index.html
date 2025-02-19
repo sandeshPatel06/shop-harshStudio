@@ -3,42 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Public Page - Products</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <title>Products - Movement Makers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
-
   <body>
-    
     <nav class="navbar">
       <div class="navbar-container">
-        <!-- Logo -->
         <a class="navbar-brand" href="/">
           <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
-          <b>MOVEMENT_MAKERS</b>
+          <b>MOVEMENT MAKERS</b>
         </a>
-
-        <!-- Navigation Links -->
         <ul class="navbar-links">
           <li><a href="/" class="active">Home</a></li>
           <li><a href="/login">Admin Login</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
-
-        <!-- Search and Cart -->
         <div class="navbar-actions">
-          <input
-            type="text"
-            class="navbar-search"
-            placeholder="Search products..."
-          />
+          <input type="text" class="navbar-search" placeholder="Search products..." />
           <a href="/cart" class="navbar-cart">
             <i class="fas fa-shopping-cart"></i>
             <span class="cart-count">0</span>
@@ -46,92 +29,38 @@
         </div>
       </div>
     </nav>
-
-    <!-- Container for main content -->
+    
     <div class="container">
-      <h1>Products</h1>
+      <h1>Our Products</h1>
       <div class="row">
-        {% if products %} {% for product in products %}
-        <div
-          class="product-card"
-          onclick="showProductDetails('{{ product.name }}', '{{ product.image_path }}','{{ product.description}}', '{{ product.price }}')"
-        >
-          <img
-            src="{{ url_for('static', filename=product.image_path) }}"
-            alt="{{ product.name }}"
-          />
-          <h3>{{ product.name }}</h3>
-          <p><strong>Price:</strong> ${{ product.price }}</p>
-        </div>
-        {% endfor %} {% else %}
-        <div class="alert" role="alert">No products available.</div>
+        {% if products %}
+          {% for product in products %}
+          <div class="product-card" onclick="showProductDetails('{{ product.name }}', '{{ product.image_path }}','{{ product.description }}', '{{ product.price }}')">
+            <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" />
+            <h3>{{ product.name }}</h3>
+            <p><strong>Price:</strong> ${{ product.price }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="alert" role="alert">No products available.</div>
         {% endif %}
       </div>
     </div>
-
-    <!-- Modal for product details -->
+    
     <div id="productDetailsModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <div id="productDetailsContent"></div>
+        <button onclick="addToCart(selectedProductId)">Add to Cart</button>
       </div>
     </div>
-
- 
-        <div class="footer-container">
-            <div class="footer-about">
-                <h4>About Us</h4>
-                <p>We Always try provide Best qulity of Frames , Glass and Photos</p>
-            </div>
-
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#" onclick="">Courses</a></li>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="https://wa.me/9399613606">Contact Us</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
-                <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
-                <p><i class="fas fa-map-marker-alt"></i> 420 kareli St, MP narsinghpur, india</p>
-            </div>
-
-            <div class="footer-social">
-                <h4>Follow Us</h4>
-                <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" class="social-icon"><i
-                        class="fab fa-twitter"></i></a>
-                <a href="https://www.linkedin.com/in/sandesh-patel07?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-                    class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                <a href="https://www.instagram.com/sandesh_patel007?igsh=MXVjd3JreWNkMzBsYg==" class="social-icon"><i
-                        class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2025 Studio Platform. All Rights Reserved | <a href="#">Privacy Policy</a> | <a href="#">Terms
-                    of Service</a></p>
-        </div>
-
-
-    </footer> -->
+    
     <footer class="footer">
       <div class="footer-container">
-        <!-- About Section -->
         <div class="footer-column">
           <h4>About Us</h4>
-          <p>
-            We strive to provide the best quality frames, glasses, and photos to
-            make your memories last forever.
-          </p>
+          <p>Providing the best quality frames, glasses, and photos for your memories.</p>
         </div>
-
-        <!-- Navigation Links -->
         <div class="footer-column">
           <h4>Quick Links</h4>
           <ul>
@@ -142,46 +71,26 @@
             <li><a href="#">FAQ</a></li>
           </ul>
         </div>
-
-        <!-- Contact Info -->
         <div class="footer-column">
           <h4>Contact Us</h4>
           <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
           <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
-          <p>
-            <i class="fas fa-map-marker-alt"></i> 420 Kareli St, MP Narsinghpur,
-            India
-          </p>
+          <p><i class="fas fa-map-marker-alt"></i> 420 Kareli St, MP Narsinghpur, India</p>
         </div>
-
-        <!-- Social Media Links -->
         <div class="footer-column">
           <h4>Follow Us</h4>
           <div class="social-icons">
-            <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09"
-              ><i class="fab fa-twitter"></i
-            ></a>
-            <a
-              href="https://www.linkedin.com/in/sandesh-patel07?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-              ><i class="fab fa-linkedin-in"></i
-            ></a>
-            <a
-              href="https://www.instagram.com/sandesh_patel007?igsh=MXVjd3JreWNkMzBsYg=="
-              ><i class="fab fa-instagram"></i
-            ></a>
+            <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.linkedin.com/in/sandesh-patel07"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://www.instagram.com/sandesh_patel007"><i class="fab fa-instagram"></i></a>
           </div>
         </div>
       </div>
-
-      <!-- Footer Bottom -->
       <div class="footer-bottom">
-        <p>
-          &copy; 2025 MOVEMENT_MAKERS. All Rights Reserved |
-          <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-        </p>
+        <p>&copy; 2025 MOVEMENT MAKERS. All Rights Reserved | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
       </div>
     </footer>
-
+    
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

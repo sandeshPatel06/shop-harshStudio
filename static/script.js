@@ -18,3 +18,12 @@ function showProductDetails(name, imagePath, description, price) {
 function closeModal() {
     document.getElementById('productDetailsModal').style.display = "none";
 }
+
+function addToCart(productId) {
+    fetch(`/add_to_cart/${productId}`, { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        document.querySelector('.cart-count').innerText = Object.keys(data.cart).length;
+    });
+}
