@@ -104,6 +104,11 @@ def public_page():
     db.close()
 
     return render_template('index.html', products=products)
+@app.route('/test')
+def page():
+  
+
+    return render_template('test.html')
 
 # Route for admin page
 @app.route('/admin')

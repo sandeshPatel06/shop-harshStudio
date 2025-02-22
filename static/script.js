@@ -113,3 +113,30 @@ function removeFromCart(productId) {
         showMessage("Something went wrong!", true);
     });
 }
+// JavaScript for theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+        });
+
+        // Functionality for "Buy Now" button
+        function buyNow(productId, productName, productPrice) {
+            // Display order summary modal with product details
+            document.getElementById('orderSummaryContent').innerHTML = `
+                <p><strong>Product:</strong> ${productName}</p>
+                <p><strong>Price:</strong> $${productPrice}</p>
+                <p><strong>Quantity:</strong> 1</p>
+                <p><strong>Total:</strong> $${productPrice}</p>
+            `;
+            document.getElementById('orderSummaryModal').style.display = 'block';
+        }
+
+        // Close the order summary modal
+        function closeOrderSummaryModal() {
+            document.getElementById('orderSummaryModal').style.display = 'none';
+        }
+
+        // Proceed to payment function
+        function proceedToPayment() {
+            alert('Proceeding to payment...');
+            // Add your payment logic here
+        }
