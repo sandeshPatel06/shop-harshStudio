@@ -1216,3 +1216,8 @@ h2 {
 .form-group button:hover {
   background-color: #0056b3;
 }
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}

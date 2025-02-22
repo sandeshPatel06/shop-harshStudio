@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, session , jsonify
+from flask import Flask, render_template, request, redirect, session, jsonify
 import os
-import mysql.connector
+import mysql.connector  # Add this import statement
 from werkzeug.utils import secure_filename
+from functools import wraps
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -20,31 +22,63 @@ def connect_db():
 # Check if a file has an allowed extension
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-# Route for logging out
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    return redirect('/login')
-# Route for login page
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
-        # Check if the credentials are correct (static for demonstration)
-        if username == 'Harsh' and password == '5654':
+        # Connect to the database
+        db = connect_db()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+        user = cursor.fetchone()
+        
+        if user:
             session['logged_in'] = True
-            return redirect('/admin')
-        elif username == 'sandesh' and password == '9399':
-            session['logged_in'] = True
-            return redirect('/admin')
-        elif username == 'ankit' and password == '2004':
-            session['logged_in'] = True
-            return redirect('/admin')
+            session['role'] = user['role']  # Assign user role from the database
+            return redirect('/admin' if user['role'] == 'admin' else '/')
         else:
             return render_template('login.html', error='Invalid username or password')
+
     return render_template('login.html', error='')
+
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session or session.get('role') != 'admin':
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route('/create_admin', methods=['GET', 'POST'])
+@admin_required
+def create_admin():
+    if request.method == 'POST':
+        username = request.form['new_admin_username']
+        password = request.form['new_admin_password']
+        
+        # Connect to the database
+        db = connect_db()
+        cursor = db.cursor()
+
+        # Insert new admin into the database
+        cursor.execute('INSERT INTO users (username, password, role) VALUES (%s, %s, %s)', (username, password, 'admin'))
+        db.commit()
+        
+        # Close the database connection
+        db.close()
+
+        return render_template('create_admin.html', success='New admin created successfully!')
+    
+    return render_template('create_admin.html')
+
+
 
 # Route for adding a product
 @app.route('/add_product', methods=['GET', 'POST'])
