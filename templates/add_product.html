@@ -1,14 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Movement Makers</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="shortcut icon" href="/static/uploads/logo.ico" type="image/x-icon" />
+        <style>
+            /* Include the CSS here */
+        </style>
+    </head>
     <style></style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a class="navbar-brand" href="/">
+                <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
+                <b>MOVEMENT MAKERS</b>
+            </a>
+            <ul class="navbar-links">
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/login">Admin Login</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <input type="text" class="navbar-search" placeholder="Search products..." />
+                <a href="/cart" class="navbar-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+            <button id="theme-toggle">Switch Theme</button>
+        </div>
+    </nav>
     <div class="container">
         <h2>Add Product</h2>
         <form action="/add_product" method="post" enctype="multipart/form-data">

@@ -1,0 +1,17 @@
+Metadata-Version: 2.2
+Name: db
+Version: 0.1.1
+Summary: Databases for Humans
+Home-page: https://github.com/lgastako/db
+Author: John Evans
+Author-email: lgastako@gmail.com
+License: MIT
+Provides: db
+Requires-Dist: antiorm
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: license
+Dynamic: provides
+Dynamic: requires-dist
+Dynamic: summary

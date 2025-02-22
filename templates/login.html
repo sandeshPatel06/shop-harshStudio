@@ -1,63 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
-        .login-container {
-            width: 300px;
-            margin: 100px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="password"] {
-            width: 90%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-        .form-group .error {
-            color: red;
-            font-size: 14px;
-        }
-        .form-group button {
-            width: 50%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-
-        }
-        .form-group button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Movement Makers</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="shortcut icon" href="/static/uploads/logo.ico" type="image/x-icon" />
+        <style>
+            /* Include the CSS here */
+        </style>
+    </head>
+    <style></style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a class="navbar-brand" href="/">
+                <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
+                <b>MOVEMENT MAKERS</b>
+            </a>
+            <ul class="navbar-links">
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/login">Admin Login</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <input type="text" class="navbar-search" placeholder="Search products..." />
+                <a href="/cart" class="navbar-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+            <button id="theme-toggle">Switch Theme</button>
+        </div>
+    </nav>
     <div class="login-container">
         <h2>Login</h2>
         <form action="/login" method="post">
