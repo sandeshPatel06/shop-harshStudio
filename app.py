@@ -1,23 +1,46 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
 import os
-import mysql.connector  # Add this import statement
+import platform
 from werkzeug.utils import secure_filename
 from functools import wraps
-
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Function to connect to the MySQL database
-def connect_db():
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='',
-        database='product_management_system'
-    )
+# Detect if running on mobile (Termux) or PC
+if "ANDROID_STORAGE" in os.environ:
+    # Running on mobile, store DB in Termux storage
+    db_path = "/data/data/com.termux/files/home/product_management.db"
+else:
+    # Running on PC, store DB locally
+    db_path = os.path.join(os.getcwd(), "product_management.db")
+
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Define User model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(20), nullable=False)
+
+# Define Product model
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    image_path = db.Column(db.String(255), nullable=True)
+
+# Create database tables
+with app.app_context():
+    db.create_all()
 
 # Check if a file has an allowed extension
 def allowed_file(filename):
@@ -28,24 +51,16 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        # Connect to the database
-        db = connect_db()
-        cursor = db.cursor(dictionary=True)
-
-        cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
-        user = cursor.fetchone()
+        user = User.query.filter_by(username=username, password=password).first()
         
         if user:
             session['logged_in'] = True
-            session['role'] = user['role']  # Assign user role from the database
-            return redirect('/admin' if user['role'] == 'admin' else '/')
+            session['role'] = user.role
+            return redirect('/admin' if user.role == 'admin' else '/')
         else:
             return render_template('login.html', error='Invalid username or password')
 
     return render_template('login.html', error='')
-
-
 
 def admin_required(f):
     @wraps(f)
@@ -55,32 +70,21 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
 @app.route('/create_admin', methods=['GET', 'POST'])
-@admin_required
+# @admin_required
 def create_admin():
     if request.method == 'POST':
         username = request.form['new_admin_username']
         password = request.form['new_admin_password']
         
-        # Connect to the database
-        db = connect_db()
-        cursor = db.cursor()
-
-        # Insert new admin into the database
-        cursor.execute('INSERT INTO users (username, password, role) VALUES (%s, %s, %s)', (username, password, 'admin'))
-        db.commit()
-        
-        # Close the database connection
-        db.close()
+        new_admin = User(username=username, password=password, role='admin')
+        db.session.add(new_admin)
+        db.session.commit()
 
         return render_template('create_admin.html', success='New admin created successfully!')
     
     return render_template('create_admin.html')
 
-
-
-# Route for adding a product
 @app.route('/add_product', methods=['GET', 'POST'])
 def add_product():
     if 'logged_in' in session and session['logged_in']:
@@ -89,116 +93,60 @@ def add_product():
             price = float(request.form['price'])
             description = request.form['description']
             
-            # Check if the post request has the file part
             if 'file' not in request.files:
                 return redirect(request.url)
             file = request.files['file']
 
-            # If the user does not select a file, the browser submits an empty part without a filename
             if file.filename == '':
                 return redirect(request.url)
 
-            # Check if the file is allowed
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(filepath)
 
-                # Connect to the database
-                db = connect_db()
-                cursor = db.cursor()
-
-                # Insert product data into the database
-                cursor.execute('INSERT INTO products (name, price, description, image_path) VALUES (%s, %s, %s, %s)', (name, price, description, "uploads/"+filename))
-                db.commit()
-
-                # Close the database connection
-                db.close()
+                new_product = Product(name=name, price=price, description=description, image_path="uploads/"+filename)
+                db.session.add(new_product)
+                db.session.commit()
 
                 return redirect('/admin')
-            else:
-                return redirect(request.url)
         else:
             return render_template('add_product.html')
     else:
         return redirect('/login')
 
-# Route for public page
 @app.route('/')
 def public_page():
-    # Connect to the database
-    db = connect_db()
-    cursor = db.cursor(dictionary=True)
-    
-    # Fetch products data from the database
-    cursor.execute('SELECT * FROM products')
-    products = cursor.fetchall()
-    
-    # Close the database connection
-    db.close()
-
+    products = Product.query.all()
     return render_template('index.html', products=products)
-@app.route('/test')
-def page():
-  
 
-    return render_template('test.html')
-
-# Route for admin page
 @app.route('/admin')
 def admin():
     if 'logged_in' in session and session['logged_in']:
-        # Connect to the database
-        db = connect_db()
-        cursor = db.cursor(dictionary=True)
-        
-        # Fetch products data from the database
-        cursor.execute('SELECT * FROM products')
-        products = cursor.fetchall()
-        
-        # Close the database connection
-        db.close()
-
+        products = Product.query.all()
         return render_template('admin.html', products=products)
     else:
         return redirect('/login')
 
-# Route for deleting a product
 @app.route('/delete_product/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
     if 'logged_in' in session and session['logged_in']:
-        # Connect to the database
-        db = connect_db()
-        cursor = db.cursor()
+        product = Product.query.get(product_id)
 
-        # Get the image path of the product to be deleted
-        cursor.execute('SELECT image_path FROM products WHERE id = %s', (product_id,))
-        result = cursor.fetchone()
-        image_path = result[0]
+        if product:
+            if product.image_path:
+                os.remove("static/"+product.image_path)
 
-        # Delete product data from the database
-        cursor.execute('DELETE FROM products WHERE id = %s', (product_id,))
-        db.commit()
-
-        # Close the database connection
-        db.close()
-
-        # Delete the image file from the server
-        if image_path:
-            os.remove("static/"+image_path)
+            db.session.delete(product)
+            db.session.commit()
         
         return redirect('/admin')
     else:
         return redirect('/login')
 
-# Add the rest of the routes and functions as before
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
-    db = connect_db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM products WHERE id = %s', (product_id,))
-    product = cursor.fetchone()
-    db.close()
+    product = Product.query.get(product_id)
     
     if not product:
         return jsonify({'message': 'Product not found'}), 404
@@ -210,7 +158,7 @@ def add_to_cart(product_id):
     if str(product_id) in cart:
         cart[str(product_id)]['quantity'] += 1
     else:
-        cart[str(product_id)] = {'name': product['name'], 'price': product['price'], 'quantity': 1}
+        cart[str(product_id)] = {'name': product.name, 'price': product.price, 'quantity': 1}
     
     session.modified = True
     return jsonify({'message': 'Product added to cart', 'cart': cart})
@@ -218,10 +166,11 @@ def add_to_cart(product_id):
 @app.route('/cart')
 def cart():
     return render_template('cart.html', cart=session.get('cart', {}))
+
 @app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
 def remove_from_cart(product_id):
     if 'cart' in session and str(product_id) in session['cart']:
-        del session['cart'][str(product_id)]  # Remove product from cart
+        del session['cart'][str(product_id)]
         session.modified = True
         return jsonify({'message': 'Product removed from cart', 'cart': session['cart']})
     
@@ -230,9 +179,7 @@ def remove_from_cart(product_id):
 @app.route('/clear_cart', methods=['POST'])
 def clear_cart():
     session.pop('cart', None)
-    
     return render_template('cart.html', cart=session.get('cart', {}))
 
-
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5000)
