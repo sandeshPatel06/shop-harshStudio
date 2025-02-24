@@ -6,21 +6,18 @@ from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+app.secret_key = 'your_secret_key'  # Secret key for session management
+app.config['UPLOAD_FOLDER'] = 'static/uploads'  # Folder for uploaded images
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}  # Allowed file extensions
 
-# Detect if running on mobile (Termux) or PC
-if "ANDROID_STORAGE" in os.environ:
-    # Running on mobile, store DB in Termux storage
-    db_path = "/data/data/com.termux/files/home/product_management.db"
-else:
-    # Running on PC, store DB locally
-    db_path = os.path.join(os.getcwd(), "product_management.db")
+# Database path (Stored locally on PC)
+db_path = os.path.join(os.getcwd(), "product_management.db")
 
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize database
 db = SQLAlchemy(app)
 
 # Define User model
@@ -28,7 +25,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # Role can be 'admin' or 'user'
 
 # Define Product model
 class Product(db.Model):
@@ -36,16 +33,17 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    image_path = db.Column(db.String(255), nullable=True)
+    image_path = db.Column(db.String(255), nullable=True)  # Image file path
 
 # Create database tables
 with app.app_context():
     db.create_all()
 
-# Check if a file has an allowed extension
+# Function to check if a file has an allowed extension
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+# User login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -62,6 +60,7 @@ def login():
 
     return render_template('login.html', error='')
 
+# Decorator to restrict access to admin routes
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -70,8 +69,9 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Create admin user route
 @app.route('/create_admin', methods=['GET', 'POST'])
-# @admin_required
+@admin_required
 def create_admin():
     if request.method == 'POST':
         username = request.form['new_admin_username']
@@ -85,6 +85,7 @@ def create_admin():
     
     return render_template('create_admin.html')
 
+# Add product route
 @app.route('/add_product', methods=['GET', 'POST'])
 def add_product():
     if 'logged_in' in session and session['logged_in']:
@@ -115,11 +116,13 @@ def add_product():
     else:
         return redirect('/login')
 
+# Public homepage displaying all products
 @app.route('/')
 def public_page():
     products = Product.query.all()
     return render_template('index.html', products=products)
 
+# Admin dashboard
 @app.route('/admin')
 def admin():
     if 'logged_in' in session and session['logged_in']:
@@ -128,6 +131,7 @@ def admin():
     else:
         return redirect('/login')
 
+# Delete product route
 @app.route('/delete_product/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
     if 'logged_in' in session and session['logged_in']:
@@ -144,6 +148,7 @@ def delete_product(product_id):
     else:
         return redirect('/login')
 
+# Add product to cart
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
     product = Product.query.get(product_id)
@@ -163,10 +168,12 @@ def add_to_cart(product_id):
     session.modified = True
     return jsonify({'message': 'Product added to cart', 'cart': cart})
 
+# View cart
 @app.route('/cart')
 def cart():
     return render_template('cart.html', cart=session.get('cart', {}))
 
+# Remove product from cart
 @app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
 def remove_from_cart(product_id):
     if 'cart' in session and str(product_id) in session['cart']:
@@ -176,10 +183,12 @@ def remove_from_cart(product_id):
     
     return jsonify({'message': 'Product not found in cart'}), 404
 
+# Clear entire cart
 @app.route('/clear_cart', methods=['POST'])
 def clear_cart():
     session.pop('cart', None)
     return render_template('cart.html', cart=session.get('cart', {}))
 
+# Run Flask app
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
