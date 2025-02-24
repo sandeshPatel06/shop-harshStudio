@@ -25,7 +25,8 @@ Welcome to the Product Management System! This system allows administrators to m
      ```
 
 ### 2. Install phpMyAdmin
-skip 1 to 4 if you are using xampp
+(skip 1 to 4 if you are using XAMPP)
+
 1. **Download phpMyAdmin:**
    - Go to the [phpMyAdmin official website](https://www.phpmyadmin.net/).
    - Download the latest version of phpMyAdmin for Windows.
@@ -57,7 +58,7 @@ git clone https://github.com/sandeshPatel06/shop-harshStudio.git
 Navigate to the project directory:
 
 ```bash
-cd shop-harshstudio
+cd shop-harshStudio
 ```
 
 Create a virtual environment:
@@ -66,15 +67,12 @@ Create a virtual environment:
 python -m venv venv
 ```
 
-
 ### 5. Activate Virtual Environment
 Activate the virtual environment:
 
 ```bash
 .\venv\Scripts\activate.ps1
 ```
-
-   
 
 ### 6. Install Dependencies
 Install the required dependencies:
@@ -83,36 +81,15 @@ Install the required dependencies:
 pip install -r requirements.txt
 ```
 
-### 7. Set Up Database
-1. **Create the Database:**
-   - Open phpMyAdmin.
-   - Create a new database named `product_management_system`.
 
-2. **Import the Database Schema:**
-   - In phpMyAdmin, select the `product_management_system` database.
-   - Click on the "Import" tab.
-   - Choose the `shop.sql` file from the repository and click "Go" to import it.
-
-### 8. Update Database Configuration
-Update the database connection details in `app.py`:
-
-```python
-db = mysql.connector.connect(
-    host='localhost',
-    user='your_mysql_username',
-    password='your_mysql_password',
-    database='product_management_system'
-)
-```
-
-### 9. Run the Application
+### 7. Run the Application
 Run the application:
 
 ```bash
 python app.py
 ```
 
-### 10. Access the Application
+### 8. Access the Application
 Open your web browser and navigate to:
 
 ```
@@ -123,9 +100,9 @@ http://localhost:5000
 
 ### Admin Interface
 1. Navigate to `http://localhost:5000/login` to access the admin login page.
-2. Use the default admin credentials: 
-   - Username: `admin`
-   - Password: `1234`
+2. Use the default admin credentials:
+   - Username: `Harsh`
+   - Password: `5654`
 3. Once logged in, you can add, edit, and delete products using the admin dashboard at `http://localhost:5000/admin`.
 
 ### Public Interface
@@ -155,8 +132,4 @@ CREATE TABLE products (
 ---
 
 By following these steps, you should be able to set up, configure, and run your Product Management System on Windows using Python 3 and phpMyAdmin.
-
-
-
-
 
