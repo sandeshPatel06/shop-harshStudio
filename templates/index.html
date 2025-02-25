@@ -6,7 +6,7 @@
     <title>Movement Makers</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <link rel="shortcut icon" href="/static/uploads/newlogo.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/uploads/logo.ico" type="image/x-icon" />
     <style>
         /* Include the CSS here */
     </style>
@@ -15,7 +15,7 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a class="navbar-brand" href="/">
-                <img src="/static/uploads/newlogo.png" alt="Logo" class="navbar-logo" />
+                <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
                 <b>MOVEMENT MAKERS</b>
             </a>
             <ul class="navbar-links">
@@ -43,7 +43,7 @@
             <div class="product-card">
                 <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" />
                 <h3>{{ product.name }}</h3>
-                <p><strong>Price:</strong> ₹{{ product.price }}</p>
+                <p><strong>Price:</strong> ${{ product.price }}</p>
                 <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
                 <button class="btn buy-now" onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">Buy Now</button>
                 <button class="btn view-details" onclick="showProductDetails('{{ product.name }}', '{{ product.image_path }}', '{{ product.description }}', '{{ product.price }}', '{{ product.id }}')">View Details</button>
@@ -84,22 +84,22 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="#about">About Us</a></li>
                     <li><a href="/courses">Courses</a></li>
-                    <li><a href="https://wa.me/9301885654">Contact Us</a></li>
+                    <li><a href="https://wa.me/9399613606">Contact Us</a></li>
                     <li><a href="#">FAQ</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h4>Contact Us</h4>
-                <p><i class="fas fa-envelope"></i> movement.maker@gmail.com</p>
-                <p><i class="fas fa-phone-alt"></i> +91 6968196732</p>
-                <p><i class="fas fa-map-marker-alt"></i> Narsinghpur (M.P), India</p>
+                <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
+                <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
+                <p><i class="fas fa-map-marker-alt"></i> 420 Kareli St, MP Narsinghpur, India</p>
             </div>
             <div class="footer-column">
                 <h4>Follow Us</h4>
                 <div class="social-icons">
                     <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09"><i class="fab fa-twitter"></i></a>
                     <a href="https://www.linkedin.com/in/sandesh-patel07"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://www.instagram.com/harsu_k17"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/sandesh_patel007"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
