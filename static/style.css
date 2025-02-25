@@ -924,6 +924,7 @@ body.dark-theme .container {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  justify-content: center;
 }
 
 body.dark-theme .navbar {
