@@ -54,9 +54,9 @@
           {% for product_id, item in cart.items() %}
           <tr id="product-row-{{ product_id }}">
             <td>{{ item.name }}</td>
-            <td>${{ item.price }}</td>
+            <td>₹{{ item.price }}</td>
             <td>{{ item.quantity }}</td>
-            <td>${{ item.price * item.quantity }}</td>
+            <td>₹{{ item.price * item.quantity }}</td>
             <td>
                 <button onclick="removeFromCart('{{ product_id }}')">Remove</button>
 

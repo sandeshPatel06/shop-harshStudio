@@ -24,6 +24,7 @@ body {
 .navbar a:hover {
   background-color: #ddd;
   color: rgb(215, 243, 104);
+  border-radius: 8px;
 }
 
 .navbar a.active {
