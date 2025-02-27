@@ -1,0 +1,44 @@
+
+
+    <div class="container">
+        <h1>Our Products</h1>
+        <div id="messageBox" class="message-box"></div>
+        <div class="row">
+            {% if products %} 
+            {% for product in products %}
+            <div class="product-card">
+                <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" />
+                <h3>{{ product.name }}</h3>
+                <p><strong>Price:</strong> ${{ product.price }}</p>
+                <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+                <button class="btn buy-now" onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">Buy Now</button>
+                <button class="btn view-details" onclick="viewProductDetails('{{ product.id }}')">View Details</button> <!-- New button -->
+            </div>
+            {% endfor %} 
+            {% else %}
+            <div class="alert" role="alert">No products available.</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Product Details Modal -->
+    <div id="productDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="productDetailsContent"></div>
+            <button class="btn add-to-cart" id="modalAddToCartBtn">Add to Cart</button>
+            <button class="btn buy-now" id="modalBuyNowBtn" onclick="buyNow(product.id, product.name, product.price)">Buy Now</button>
+        </div>
+    </div>
+
+    <!-- Order Summary Modal -->
+    <div id="orderSummaryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeOrderSummaryModal()">&times;</span>
+            <h3>Order Summary</h3>
+            <div id="orderSummaryContent"></div>
+            <button class="btn" onclick="proceedToPayment()">Proceed to Payment</button>
+        </div>
+    </div>
+
+    
