@@ -1,81 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<head>
+
   <head>
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Movement Makers</title>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-      <link rel="shortcut icon" href="/static/uploads/logo.ico" type="image/x-icon" />
-      <style>
-          /* Include the CSS here */
-      </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movement Makers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="shortcut icon" href="/static/uploads/logo.ico" type="image/x-icon" />
+    <style>
+      /* Include the CSS here */
+    </style>
   </head>
-  </head>
-  <body>
-    <nav class="navbar">
-      <div class="navbar-container">
-          <a class="navbar-brand" href="/">
-              <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
-              <b>MOVEMENT MAKERS</b>
-          </a>
-          <ul class="navbar-links">
-              <li><a href="/" class="active">Home</a></li>
-              <li><a href="/login">Admin Login</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-          </ul>
-          <div class="navbar-actions">
-              <input type="text" class="navbar-search" placeholder="Search products..." />
-              <a href="/cart" class="navbar-cart">
-                  <i class="fas fa-shopping-cart"></i>
-                  <span class="cart-count">0</span>
-              </a>
-          </div>
-          <button id="theme-toggle">Switch Theme</button>
-      </div>
-  </nav>
+</head>
 
-    <h1>Your Shopping Cart</h1>
-    <div class="cart-container">
-      {% if cart %}
-      <table>
-        <thead>
-          <tr>
-            <th>Product Name</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for product_id, item in cart.items() %}
-          <tr id="product-row-{{ product_id }}">
-            <td>{{ item.name }}</td>
-            <td>₹{{ item.price }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>₹{{ item.price * item.quantity }}</td>
-            <td>
-                <button onclick="removeFromCart('{{ product_id }}')">Remove</button>
+<body>
+  {% include 'navbar.html' %}
 
-            </td>
+  <h1>Your Shopping Cart</h1>
+  <div class="cart-container">
+    {% if cart %}
+    <table>
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Action</th>
         </tr>
-        
-          {% endfor %}
-        </tbody>
-      </table>
-      <br />
-      <form action="{{ url_for('clear_cart') }}" method="POST">
-        <button type="submit">Clear Cart</button>
-      </form>
-      {% else %}
-      <p>Your cart is empty.</p>
-      {% endif %}
-    </div>
+      </thead>
+      <tbody>
+        {% for product_id, item in cart.items() %}
+        <tr id="product-row-{{ product_id }}">
+          <td>{{ item.name }}</td>
+          <td>₹{{ item.price }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>₹{{ item.price * item.quantity }}</td>
+          <td>
+            <button onclick="removeFromCart('{{ product_id }}')">Remove</button>
 
-    <a href="/">Continue Shopping</a>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+          </td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+    <br />
+    <form action="{{ url_for('clear_cart') }}" method="POST">
+      <button type="submit">Clear Cart</button>
+    </form>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+  </div>
+
+  <a href="/">Continue Shopping</a>
+
+  {% include 'products.html' %}
+
+  {% include 'footer.html' %}
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
 </html>
