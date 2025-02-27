@@ -131,6 +131,21 @@ def admin():
     else:
         return redirect('/login')
 
+# View product details
+@app.route('/product/<int:product_id>', methods=['GET'])
+def product_details(product_id):
+    product = Product.query.get(product_id)
+    if product:
+        return jsonify({
+            'id': product.id,
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'image_path': product.image_path
+        })
+    else:
+        return jsonify({'error': 'Product not found'}), 404
+
 # Delete product route
 @app.route('/delete_product/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
