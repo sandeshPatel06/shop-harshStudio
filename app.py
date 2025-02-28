@@ -31,9 +31,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tra
 db = SQLAlchemy(app)
 
 # Twilio configuration
-TWILIO_ACCOUNT_SID = 'ACb4e73d8e1e9c95dab4cb3d9ed5143697'
-TWILIO_AUTH_TOKEN = '49743a20228c58eb88e1b45a2eff06a9'
-TWILIO_PHONE_NUMBER = '+17603748781'
+TWILIO_ACCOUNT_SID = 'your_account_sid'
+TWILIO_AUTH_TOKEN = 'your_auth_token'
+TWILIO_PHONE_NUMBER = 'your_twilio_phone_number'
+
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # Define the User model for the database
