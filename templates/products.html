@@ -22,16 +22,17 @@
 </div>
 
 <!-- Product Details Modal -->
+{% for product in products %}
 <div id="productDetailsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <div id="productDetailsContent"></div>
-        <button class="btn add-to-cart" id="modalAddToCartBtn">Add to Cart</button>
-        <button class="btn buy-now" id="modalBuyNowBtn" onclick="buyNow(product.id, product.name, product.price)">Buy
-            Now</button>
+        <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+        <button class="btn buy-now"
+        onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">Buy Now</button>
     </div>
 </div>
-
+{% endfor %}
 <!-- Order Summary Modal -->
 <div id="orderSummaryModal" class="modal">
     <div class="modal-content">

@@ -1007,7 +1007,7 @@ body.dark-theme .navbar {
 }
 
 .list-group-item {
-  display: flex;
+ 
   background-color: #f9f9f9;
   margin-bottom: 10px;
   border-radius: 4px;
