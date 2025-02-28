@@ -55,7 +55,7 @@
                         <img src="{{ url_for('static', filename=product.image_path) }}" alt="Product Image">
                         <div>
                             <h4>{{ product.name }}</h4>
-                            <p><strong>Price:</strong> ₹{{ product.price }}</p>
+                            <p><strong>Price:</strong> ${{ product.price }}</p>
                             <p><strong>Description:</strong> {{ product.description }}</p>
                             <!-- Delete button -->
                             <form action="/delete_product/{{ product.id }}" method="post">
