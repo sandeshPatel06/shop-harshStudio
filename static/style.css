@@ -1107,7 +1107,7 @@ h2 {
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  width: 100%;
+  width: 80%;
   text-align: center;
   transition: background-color 0.3s ease;
 }

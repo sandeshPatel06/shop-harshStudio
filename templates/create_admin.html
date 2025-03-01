@@ -14,60 +14,6 @@
 <body>
     {% include 'navbar.html' %}
 
-    {% include 'products.html' %}
-
-    {% include 'footer.html' %}
-    <!-- Navigation bar -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a class="navbar-brand" href="/">
-                <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
-                <b>MOVEMENT MAKERS</b>
-            </a>
-            <ul class="navbar-links">
-                <li><a href="/" class="active">Home</a></li>
-                <li><a href="/login">Admin Login</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <div class="navbar-actions">
-                <input type="text" class="navbar-search" placeholder="Search products..." />
-                <a href="/cart" class="navbar-cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count">0</span>
-                </a>
-            </div>
-            <button id="theme-toggle">Switch Theme</button>
-        </div>
-    </nav>
-
-    <!-- Container for main content -->
-    <div class="container">
-        <div class="panel">
-            <h3 class="panel-title">
-                Products List
-                <a href="/add_product" class="btn">Add Product</a>
-            </h3>
-            <div class="panel-body">
-                <ul class="list-group">
-                    {% for product in products %}
-                    <li class="list-group-item">
-                        <img src="{{ url_for('static', filename=product.image_path) }}" alt="Product Image">
-                        <div>
-                            <h4>{{ product.name }}</h4>
-                            <p><strong>Price:</strong> ${{ product.price }}</p>
-                            <p><strong>Description:</strong> {{ product.description }}</p>
-                            <!-- Delete button -->
-                            <form action="/delete_product/{{ product.id }}" method="post">
-                                <button type="submit" class="btn">Delete</button>
-                            </form>
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
     <div class="container">
         <h2>Create New Admin</h2>
         {% if success %}
@@ -87,6 +33,13 @@
             </div>
         </form>
     </div>
+    {% include 'products.html' %}
+
+    {% include 'footer.html' %}
+    <!-- Navigation bar -->
+   
+
+   
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
