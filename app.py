@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, jsonify, flash
+from flask import Flask, render_template, request, redirect, session, jsonify, flash, url_for
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -44,7 +44,6 @@ with app.app_context():
     db.create_all()
 
 # Utility Function
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -52,9 +51,9 @@ def allowed_file(filename):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'logged_in' not in session:
+        if not session.get('logged_in'):
             flash("You need to log in first!", "warning")
-            return redirect('/login')
+            return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -62,9 +61,9 @@ def login_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'logged_in' not in session or session.get('role') != 'admin':
+        if not session.get('logged_in') or session.get('role') != 'admin':
             flash("Admin access required!", "danger")
-            return redirect('/login')
+            return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -72,38 +71,50 @@ def admin_required(f):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+        
+        if not username or not password:
+            flash("Username and password cannot be empty!", "danger")
+            return redirect(url_for('register'))
+
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             flash("Username already exists!", "danger")
-            return redirect('/register')
-        new_user = User(username=username, password=generate_password_hash(password), role='user')
+            return redirect(url_for('register'))
+
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password=hashed_password, role='user')
         db.session.add(new_user)
         db.session.commit()
+
         flash("Registration successful! Please log in.", "success")
-        return redirect('/login')
+        return redirect(url_for('login'))
+    
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             session['logged_in'] = True
             session['role'] = user.role
             flash("Login successful!", "success")
-            return redirect('/admin' if user.role == 'admin' else '/')
+            return redirect(url_for('admin') if user.role == 'admin' else url_for('public_page'))
+
         flash("Invalid username or password!", "danger")
+    
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
     flash("Logged out successfully!", "success")
-    return redirect('/login')
+    return redirect(url_for('login'))
 
 @app.route('/add_product', methods=['GET', 'POST'])
 @login_required
@@ -113,15 +124,22 @@ def add_product():
         price = float(request.form['price'])
         description = request.form['description']
         file = request.files['file']
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-            new_product = Product(name=name, price=price, description=description, image_path=filepath)
+
+            # Store only the relative path
+            image_path = f"static/uploads/{filename}"
+
+            new_product = Product(name=name, price=price, description=description, image_path=image_path)
             db.session.add(new_product)
             db.session.commit()
+
             flash("Product added successfully!", "success")
-            return redirect('/admin')
+            return redirect(url_for('admin'))
+
     return render_template('add_product.html')
 
 @app.route('/')
@@ -138,17 +156,19 @@ def admin():
 @app.route('/delete_product/<int:product_id>', methods=['POST'])
 @admin_required
 def delete_product(product_id):
-    product = Product.query.get(product_id)
-    if product:
-        try:
-            if product.image_path and os.path.exists(product.image_path):
-                os.remove(product.image_path)
-        except Exception as e:
-            flash(f"Error deleting file: {e}", "danger")
-        db.session.delete(product)
-        db.session.commit()
-        flash("Product deleted successfully!", "success")
-    return redirect('/admin')
+    product = Product.query.get_or_404(product_id)
+
+    # Remove the product image if it exists
+    if product.image_path:
+        image_path = os.path.join(app.root_path, product.image_path)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product deleted successfully!", "success")
+    
+    return redirect(url_for('admin'))
 
 @app.route('/cart')
 @login_required
@@ -160,7 +180,7 @@ def cart():
 def clear_cart():
     session.pop('cart', None)
     flash("Cart cleared successfully!", "success")
-    return redirect('/cart')
+    return redirect(url_for('cart'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,12 +1,11 @@
-<!-- templates/login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!-- Add your CSS and other head elements here -->
 
+    <!-- Include your CSS and other head elements -->
     {% include 'header.html' %}
 </head>
 <body>
@@ -15,7 +14,19 @@
 
     <div class="login-container">
         <h2>Login</h2>
-        <form action="/login" method="post">
+
+        <!-- Display flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('login') }}" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
@@ -24,13 +35,12 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            {% if error %}
-            <div class="form-group error">{{ error }}</div>
-            {% endif %}
             <div class="form-group">
                 <button type="submit">Login</button>
             </div>
         </form>
+        <a href="/register" class="btn">register</a>
+
     </div>
 
     <!-- Include the footer -->
