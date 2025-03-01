@@ -227,8 +227,14 @@ def add_to_cart(product_id):
 # View cart
 @app.route('/cart')
 def cart():
-    # Render the cart page with current cart contents
-    return render_template('cart.html', cart=session.get('cart', {}))
+    # Retrieve all products from the database
+    products = Product.query.all()
+    
+    # Get the current cart from the session, defaulting to an empty dictionary if it doesn't exist
+    cart = session.get('cart', {})
+    
+    # Render the cart page with current cart contents and available products
+    return render_template('cart.html', products=products, cart=cart)
 
 # Remove product from cart
 @app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
