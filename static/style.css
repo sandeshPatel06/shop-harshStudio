@@ -957,6 +957,7 @@ h2 {
   padding: 20px;
   background-color: #f5f5f5;
   border-radius: 5px;
+  border: 2px solid black;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
