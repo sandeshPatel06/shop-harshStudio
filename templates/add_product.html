@@ -1,65 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-
+  <head>
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        {% include 'header.html' %}
-        <style>
-            /* Include the CSS here */
-        </style>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      {% include 'header.html' %}
+      <style>
+        /* Include the CSS here */
+      </style>
     </head>
     <style></style>
-</head>
+  </head>
 
-<body>
+  <body>
     <nav class="navbar">
-        <div class="navbar-container">
-            <a class="navbar-brand" href="/">
-                <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
-                <b>MOVEMENT MAKERS</b>
-            </a>
-            <ul class="navbar-links">
-                <li><a href="/" class="active">Home</a></li>
-                <li><a href="/login">Admin Login</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <div class="navbar-actions">
-                <input type="text" class="navbar-search" placeholder="Search products..." />
-                <a href="/cart" class="navbar-cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count">0</span>
-                </a>
-            </div>
-            <button id="theme-toggle">Switch Theme</button>
+      <div class="navbar-container">
+        <a class="navbar-brand" href="/">
+          <img src="/static/uploads/logo.jpg" alt="Logo" class="navbar-logo" />
+          <b>MOVEMENT MAKERS</b>
+        </a>
+        <ul class="navbar-links">
+          <li><a href="/" class="active">Home</a></li>
+          <li><a href="/login">Admin Login</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="navbar-actions">
+          <input
+            type="text"
+            class="navbar-search"
+            placeholder="Search products..."
+          />
+          <a href="/cart" class="navbar-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+          </a>
         </div>
+        <button id="theme-toggle">Switch Theme</button>
+      </div>
     </nav>
     <div class="container">
-        <h2>Add Product</h2>
-        <form action="/add_product" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="name">Product Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="price">Price:</label>
-                <input type="number" id="price" name="price" required>
-            </div>
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="image">Image:</label>
-                <input type="file" id="image" name="file" required>
-            </div>
-            <button type="submit" class="btn">Submit</button>
-        </form>
+      <h2>Add Product</h2>
+      <form action="/add_product" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="name">Product Name:</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+        <div class="form-group">
+          <label for="price">Price:</label>
+          <input type="number" id="price" name="price" required />
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="image">Image:</label>
+          <input type="file" id="image" name="file" required />
+        </div>
+        <button type="submit" class="btn">Submit</button>
+      </form>
     </div>
-
-</body>    <script src="{{ url_for('static', filename='script.js') }}"></script>
-
+  </body>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </html>
