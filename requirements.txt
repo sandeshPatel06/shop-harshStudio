@@ -8,4 +8,8 @@ Jinja2==3.1.3
 MarkupSafe==2.1.5
 mysql-connector-python==8.3.0
 Werkzeug==3.0.2
+<<<<<<< HEAD
+flask-sqlalchmy
+=======
 flask-sqlalchemy
+>>>>>>> 63d9e85a92a62013f36ccbd7974546fcd82efbe4
