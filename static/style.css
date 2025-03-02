@@ -3,7 +3,10 @@
   color: rgb(215, 243, 104);
   border-radius: 8px;
 }
-
+body {
+  padding: 0;
+  margin: 0;
+}
 /* Logo */
 .navbar-logo {
   height: 40px;
@@ -75,7 +78,7 @@
   border-radius: 8px;
   margin-bottom: 20px;
   padding: 15px;
-  width: 100%;
+ 
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   cursor: pointer;
@@ -135,6 +138,7 @@
   height: auto;
   border-radius: 8px;
   margin-bottom: 20px;
+  
 }
 
 .modal-content h3 {
@@ -163,7 +167,7 @@
 /* Footer Container */
 .footer {
   background-color: #605e5e;
-  }
+}
 
 .footer-container {
   display: flex;
@@ -176,7 +180,7 @@
 
 /* Footer Columns */
 .footer-column {
- min-width: 200px;
+  min-width: 200px;
 }
 
 .footer-column h4 {
@@ -564,10 +568,8 @@ body.dark-theme .navbar {
 }
 
 .navbar-links a {
-
   font-weight: 500;
   transition: color 0.3s;
-
 }
 
 body.dark-theme .navbar-links a {
@@ -613,24 +615,8 @@ body.dark-theme .navbar-search {
   border-color: #ffca28;
 }
 
-
 body.dark-theme .navbar-cart {
   color: #f5f5f5;
-}
-
-.navbar-cart i {
-  font-size: 20px;
-}
-
-.cart-count {
-  background-color: #ffca28;
-  color: #fff;
-  border-radius: 50%;
-  font-size: 12px;
-  padding: 2px 6px;
-  position: absolute;
-  top: -5px;
-  right: -10px;
 }
 
 body.dark-theme .cart-count {
@@ -784,7 +770,6 @@ body.dark-theme .navbar {
 }
 
 .list-group-item {
- 
   background-color: #f9f9f9;
   margin-bottom: 10px;
   border-radius: 4px;
@@ -821,19 +806,19 @@ body.dark-theme .navbar {
   background-color: #c0392b;
 }
 
-
 .container {
-  max-width: 600px;
+  max-width: 100%;
   margin: 50px auto;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+ 
 }
 
 h2 {
   text-align: center;
-  color: #4CAF50;
+  color: #4caf50;
   margin-bottom: 30px;
   font-size: 24px;
 }
@@ -866,7 +851,7 @@ h2 {
 .form-group input[type="number"]:focus,
 .form-group textarea:focus,
 .form-group input[type="file"]:focus {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   outline: none;
   background-color: #fff;
 }
@@ -878,13 +863,13 @@ h2 {
 .btn {
   display: inline-block;
   padding: 12px 20px;
-  background-color: #4CAF50;
+  
   color: #fff;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  width: 80%;
+  
   text-align: center;
   transition: background-color 0.3s ease;
 }
@@ -896,61 +881,60 @@ h2 {
 /* Responsive Styles */
 @media (max-width: 768px) {
   .container {
-      margin: 20px;
-      padding: 15px;
+    margin: 20px;
+    padding: 15px;
   }
 
   h2 {
-      font-size: 20px;
+    font-size: 20px;
   }
 
   .form-group label {
-      font-size: 14px;
+    font-size: 14px;
   }
 
   .form-group input[type="text"],
   .form-group input[type="number"],
   .form-group textarea,
   .form-group input[type="file"] {
-      font-size: 14px;
-      padding: 8px;
+    font-size: 14px;
+    padding: 8px;
   }
 
   .btn {
-      font-size: 14px;
-      padding: 10px;
+    font-size: 14px;
+    padding: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-      margin: 10px;
-      padding: 10px;
+    margin: 10px;
+    padding: 10px;
   }
 
   h2 {
-      font-size: 18px;
+    font-size: 18px;
   }
 
   .form-group label {
-      font-size: 12px;
+    font-size: 12px;
   }
 
   .form-group input[type="text"],
   .form-group input[type="number"],
   .form-group textarea,
   .form-group input[type="file"] {
-      font-size: 12px;
-      padding: 6px;
+    font-size: 12px;
+    padding: 6px;
   }
 
   .btn {
-      font-size: 12px;
-      padding: 8px;
+    font-size: 12px;
+    padding: 8px;
   }
 }
 
-      
 .login-container {
   width: 300px;
   margin: 100px auto;
@@ -992,7 +976,6 @@ h2 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-
 }
 .form-group button:hover {
   background-color: #0056b3;
@@ -1008,7 +991,7 @@ h2 {
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   transition: background-color 0.3s;
 }

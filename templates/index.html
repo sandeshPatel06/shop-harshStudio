@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movement Makers</title>
     {% include 'header.html' %}
     <style>
-        /* Include the CSS here */
+      /* Include the CSS here */
     </style>
-</head>
-<body class="light-theme">
-    
-    {% include 'navbar.html' %}
-
-   {% include 'products.html' %}
-
-    {% include 'footer.html' %}
+  </head>
+  <body class="light-theme">
+    {% include 'navbar.html' %} {% include 'products.html' %} {% include
+    'footer.html' %}
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
+  </body>
 </html>

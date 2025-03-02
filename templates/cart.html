@@ -1,58 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    {% include 'header.html' %}
+  </head>
 
-<head>
+  <body>
+    {% include 'navbar.html' %}
 
-  {% include 'header.html' %}
-</head>
+    <h1>Your Shopping Cart</h1>
+    <div class="cart-container">
+      {% if cart %}
+      <table>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product_id, item in cart.items() %}
+          <tr id="product-row-{{ product_id }}">
+            <td>{{ item.name }}</td>
+            <td>${{ item.price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price * item.quantity }}</td>
+            <td>
+              <button onclick="removeFromCart('{{ product_id }}')">
+                Remove
+              </button>
+            </td>
+          </tr>
 
-<body>
-  {% include 'navbar.html' %}
+          {% endfor %}
+        </tbody>
+      </table>
+      <br />
+      <form action="{{ url_for('clear_cart') }}" method="POST">
+        <button type="submit">Clear Cart</button>
+      </form>
+      {% else %}
+      <h1>Your cart is empty.</h1>
+      <h1>Continue Shopping</h1>
+      {% endif %}
+    </div>
 
-  <h1>Your Shopping Cart</h1>
-  <div class="cart-container">
-    {% if cart %}
-    <table>
-      <thead>
-        <tr>
-          <th>Product Name</th>
-          <th>Price</th>
-          <th>Quantity</th>
-          <th>Total</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for product_id, item in cart.items() %}
-        <tr id="product-row-{{ product_id }}">
-          <td>{{ item.name }}</td>
-          <td>${{ item.price }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>${{ item.price * item.quantity }}</td>
-          <td>
-            <button onclick="removeFromCart('{{ product_id }}')">Remove</button>
-
-          </td>
-        </tr>
-
-        {% endfor %}
-      </tbody>
-    </table>
-    <br />
-    <form action="{{ url_for('clear_cart') }}" method="POST">
-      <button type="submit">Clear Cart</button>
-    </form>
-    {% else %}
-    <h1>Your cart is empty.</h1>
-<h1>Continue Shopping</h1>
-    {% endif %}
-  </div>
-
-
-  {% include 'products.html' %}
-
-  {% include 'footer.html' %}
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-
+    {% include 'products.html' %} {% include 'footer.html' %}
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
 </html>
