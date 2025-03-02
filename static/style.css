@@ -1030,13 +1030,3 @@ h2 {
   font-weight: bold;
   margin-top: 10px;
 }
-#theme-toggle {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  background-color: #4caf50;
-  color: white;
-  transition: background-color 0.3s;
-}
