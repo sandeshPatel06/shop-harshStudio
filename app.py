@@ -73,7 +73,19 @@ def admin_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+@app.route('/pay', methods=['POST'])
+def pay():
+    amount = request.form.get('amount')  # Get amount from the form
+    product_id = request.form.get('productId')  # Get product ID
+    product_name = request.form.get('productName')  # Get product name
+    quantity = request.form.get('quantity')  # Get quantity from the form
+    upi_id = "9399613606@axl"  # Replace with your actual UPI ID
+    payee_name = "Sandesh Patel"
 
+    # Create the UPI payment URL with product details
+    upi_url = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR&tn=Payment for {product_name} (ID: {product_id}, Quantity: {quantity})"
+    
+    return redirect(upi_url)  # Redirects user to installed UPI apps
 # Create admin user route
 @app.route('/create_admin', methods=['GET', 'POST'])
 # @admin_required
@@ -148,7 +160,7 @@ def product_details(product_id):
             'name': product.name,
             'price': product.price,
             'description': product.description,
-            'image_path': product.image_path
+            'image_url': url_for('static', filename=product.image_path)  # Include the full image URL
         })
     return jsonify({'error': 'Product not found'}), 404
 
@@ -207,4 +219,4 @@ def clear_cart():
     return render_template('cart.html', cart=session.get('cart', {}))
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5500 ,host='0.0.0.0')
