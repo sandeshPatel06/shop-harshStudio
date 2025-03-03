@@ -3,53 +3,6 @@ function closeModal() {
   document.getElementById("productDetailsModal").style.display = "none";
 }
 
-function addToCart(productId) {
-  fetch(`/add_to_cart/${productId}`, { method: "POST" })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.cart) {
-        showMessage(data.message);
-        // Update the cart count and total price
-        document.querySelector(".cart-count").innerText = data.total_items;
-        document.querySelector("#totalPrice").innerText = "$" + data.total_price.toFixed(2);
-      } else {
-        showMessage("Error adding product to cart.", true);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      showMessage("Something went wrong!", true);
-    });
-}
-
-function removeFromCart(productId) {
-  fetch(`/remove_from_cart/${productId}`, { method: "POST" })
-    .then((response) => response.json())
-    .then((data) => {
-      // Dynamically update the cart UI without reloading
-      if (data.cart) {
-        updateCartUI(data);
-      } else {
-        showMessage("Error removing product from cart.", true);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      showMessage("Something went wrong!", true);
-    });
-}
-
-// Function to update the cart UI dynamically
-function updateCartUI(data) {
-  // Update cart count and total price from response
-  document.querySelector(".cart-count").innerText = data.total_items;
-  document.querySelector("#totalPrice").innerText = "$" + data.total_price.toFixed(2);
-
-  // Optionally, update cart items display here if needed
-}
-
-
-
 // Function to display messages in the message box
 function showMessage(message, isError = false) {
   const messageBox = document.getElementById("messageBox");
@@ -88,7 +41,7 @@ function buyNow(productId, productName, productPrice) {
   document.getElementById("orderSummaryModal").style.display = "block";
 
   // Update total price and amount on quantity change
-  document.getElementById("quantity").addEventListener("input", function() {
+  document.getElementById("quantity").addEventListener("input", function () {
     const quantity = parseInt(this.value) || 1;
     const total = (quantity * productPrice).toFixed(2);
     document.getElementById("totalPrice").innerText = total;
@@ -114,7 +67,8 @@ function viewProductDetails(productId) {
         <p><strong>Description:</strong> ${product.description}</p>
         <p><strong>WhatsApp:</strong> <a href="https://wa.me/+919399613606?text=Name:${product.name}%0APrice:${product.price}%0ADetails:${product.description}" target="_blank">+919399613606</a></p>
       `;
-      document.getElementById("productDetailsContent").innerHTML = productDetailsContent;
+      document.getElementById("productDetailsContent").innerHTML =
+        productDetailsContent;
       document.getElementById("productDetailsModal").style.display = "block";
     })
     .catch((error) => {
