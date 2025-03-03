@@ -12,6 +12,15 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-       
-       
+
+        <!-- Hamburger Icon (for small screens) -->
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
 </nav>
+
+<script>
+    function toggleMenu() {
+        const navbar = document.querySelector('.navbar');
+        navbar.classList.toggle('active');
+    }
+</script>
