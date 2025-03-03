@@ -58,7 +58,12 @@ function closeOrderSummaryModal() {
 // Function to view product details
 function viewProductDetails(productId) {
   fetch(`/product/${productId}`)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
     .then((product) => {
       const productDetailsContent = `
         <h2>${product.name}</h2>
@@ -67,8 +72,7 @@ function viewProductDetails(productId) {
         <p><strong>Description:</strong> ${product.description}</p>
         <p><strong>WhatsApp:</strong> <a href="https://wa.me/+919399613606?text=Name:${product.name}%0APrice:${product.price}%0ADetails:${product.description}" target="_blank">+919399613606</a></p>
       `;
-      document.getElementById("productDetailsContent").innerHTML =
-        productDetailsContent;
+      document.getElementById("productDetailsContent").innerHTML = productDetailsContent;
       document.getElementById("productDetailsModal").style.display = "block";
     })
     .catch((error) => {
@@ -76,3 +80,109 @@ function viewProductDetails(productId) {
       alert("Could not load product details. Please try again later.");
     });
 }
+
+// Function to add an item to the cart
+function addToCart(productId) {
+  fetch(`/add_to_cart/${productId}`, {
+    method: "POST",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data.success) {
+        updateCartCount(); // Update cart count dynamically
+        showMessage("Item added to cart successfully!"); // Show success message
+      } else {
+        showMessage("Failed to add item to cart.", true); // Show error message
+      }
+    })
+    .catch((error) => console.error("Error:", error));
+}
+
+//// Function to update the cart UI dynamically
+function updateCartDisplay(cart) {
+  const cartContainer = document.getElementById("cartItems");
+  cartContainer.innerHTML = ""; // Clear existing items
+
+  let totalAmount = 0;
+
+  for (const productId in cart) {
+    const item = cart[productId];
+    totalAmount += item.price * item.quantity;
+
+    const cartItem = document.createElement("div");
+    cartItem.classList.add("cart-item");
+    cartItem.innerHTML = `
+      <p><strong>${item.name}</strong> - $${item.price} x ${item.quantity}</p>
+      <button onclick="removeFromCart('${productId}')">Remove</button>
+    `;
+    cartContainer.appendChild(cartItem);
+  }
+
+  document.getElementById("cartTotal").textContent = `Total: $${totalAmount.toFixed(2)}`;
+}
+
+function removeFromCart(productId) {
+  fetch(`/remove_from_cart/${productId}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          updateCartUI();
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function clearCart() {
+  fetch('/clear_cart', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          updateCartUI();
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function updateCartUI() {
+  fetch('/cart')
+  .then(response => response.text())
+  .then(html => {
+      document.querySelector('.cart-container').innerHTML = 
+          new DOMParser().parseFromString(html, 'text/html')
+          .querySelector('.cart-container').innerHTML;
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+// Function to update the cart count dynamically
+function updateCartCount() {
+  fetch("/cart_count")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      document.getElementById("cart-count").textContent = `(${data.count})`;
+    })
+    .catch((error) => console.error("Error:", error));
+}
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", updateCartCount);
