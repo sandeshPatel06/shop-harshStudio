@@ -3,14 +3,15 @@ function closeModal() {
   document.getElementById("productDetailsModal").style.display = "none";
 }
 
-// Function to add an item to the cart
 function addToCart(productId) {
   fetch(`/add_to_cart/${productId}`, { method: "POST" })
     .then((response) => response.json())
     .then((data) => {
       if (data.cart) {
         showMessage(data.message);
-        document.querySelector(".cart-count").innerText = Object.keys(data.cart).length;
+        // Update the cart count and total price
+        document.querySelector(".cart-count").innerText = data.total_items;
+        document.querySelector("#totalPrice").innerText = "$" + data.total_price.toFixed(2);
       } else {
         showMessage("Error adding product to cart.", true);
       }
@@ -21,12 +22,16 @@ function addToCart(productId) {
     });
 }
 
-// Function to remove an item from the cart
 function removeFromCart(productId) {
   fetch(`/remove_from_cart/${productId}`, { method: "POST" })
-    .then(() => {
+    .then((response) => response.json())
+    .then((data) => {
       // Dynamically update the cart UI without reloading
-      updateCartUI(); 
+      if (data.cart) {
+        updateCartUI(data);
+      } else {
+        showMessage("Error removing product from cart.", true);
+      }
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -35,19 +40,15 @@ function removeFromCart(productId) {
 }
 
 // Function to update the cart UI dynamically
-function updateCartUI() {
-  fetch('/cart')
-    .then((response) => response.json())
-    .then((data) => {
-      // Update cart UI with new cart data
-      document.querySelector(".cart-count").innerText = data.cart.length;
-      // Update cart items display here if needed
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      showMessage("Failed to update cart.", true);
-    });
+function updateCartUI(data) {
+  // Update cart count and total price from response
+  document.querySelector(".cart-count").innerText = data.total_items;
+  document.querySelector("#totalPrice").innerText = "$" + data.total_price.toFixed(2);
+
+  // Optionally, update cart items display here if needed
 }
+
+
 
 // Function to display messages in the message box
 function showMessage(message, isError = false) {
