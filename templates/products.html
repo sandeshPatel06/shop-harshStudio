@@ -38,10 +38,10 @@
 <div id="productDetailsModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
-    <img
+    <!-- <img
       src="{{ url_for('static', filename=product.image_path) }}"
       alt="{{ product.name }}"
-    />
+    /> -->
     <div id="productDetailsContent"></div>
     <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">
       Add to Cart
@@ -59,8 +59,6 @@
 <div id="orderSummaryModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeOrderSummaryModal()">&times;</span>
-    <h3>Order Summary</h3>
     <div id="orderSummaryContent"></div>
-    <button class="btn" onclick="proceedToPayment()">Proceed to Payment</button>
   </div>
 </div>
