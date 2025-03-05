@@ -1,155 +1,37 @@
 <!-- templates/navbar.html -->
- <style>/* Navbar container */
-    .navbar {
-      background-color: #333; /* Dark background for the navbar */
-      padding: 10px 20px; /* Padding for the navbar */
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-    }
-    
-    .navbar-container {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      align-items: center;
-    }
-    
-    /* Navbar Brand (Logo and Title) */
-    .navbar-logo {
-      height: 40px;
-      width: auto;
-      margin-right: 10px;
-    }
-    
-    .navbar-brand {
-      display: flex;
-      align-items: center;
-      color: white;
-      text-decoration: none;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    
-    /* Navbar Links Container */
-    .navbar-links {
-      list-style-type: none;
-      display: flex;
-      gap: 20px;
-      padding: 0;
-    }
-    
-    .navbar-links li {
-      margin: 0;
-    }
-    
-    .navbar-links a {
-      color: white;
-      text-decoration: none;
-      padding: 8px 16px;
-      font-size: 18px;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-      max-width: 80px;
-    }
-    
-    .navbar-links a:hover,
-    .navbar-links a.active {
-      background-color: #555; /* Active or hovered link color */
-    }
-    
-    /* Media Query for Responsiveness */
-    @media screen and (max-width: 768px) {
-      .navbar {
-        flex-direction: column;
-        padding: 20px;
-      }
-    
-      .navbar-container {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-      }
-    
-      .navbar-links {
-        width: 100%;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
-      }
-    
-      .navbar-links a {
-        padding: 12px;
-        text-align: center;
-        width: 100%;
-      }
-    }
-    
-    /* Optional: If you want a dropdown for small screens */
-    @media screen and (max-width: 768px) {
-      .navbar-links {
-        display: none;
-        width: 100%;
-      }
-      .navbar.active .navbar-links {
-        display: flex;
-      }
-    
-      .navbar .hamburger {
-        display: block;
-        cursor: pointer;
-      }
-    }
-    /* General styling */
-    body {
-      font-family: Arial, sans-serif;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    
-    .message-box {
-      margin-bottom: 20px;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    </style>
 <nav class="navbar">
   <div class="navbar-container">
-      <a class="navbar-brand" href="/">
-          <img src="/static/uploads/newlogo.png" alt="Logo" class="navbar-logo" />
-          <b>MOVEMENT MAKERS</b>
-      </a>
-      <ul class="navbar-links">
-          <li><a href="/" class="active">Home</a></li>
-          <li><a href="/login">Admin Login</a></li>
-          <li><a href="/login">Sign In</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="/cart">Cart <span id="cart-count">(0)</span></a></li> <!-- Display cart count -->
-      </ul>
+    <a class="navbar-brand" href="/">
+      <img src="/static/uploads/newlogo.png" alt="Logo" class="navbar-logo" />
+      <b>MOVEMENT MAKERS</b>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/login">Admin Login</a></li>
+      <li><a href="/login">Sign In</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li>
+        <a href="/cart">Cart <span id="cart-count">(0)</span></a>
+      </li>
+      <!-- Display cart count -->
+    </ul>
 
-      <!-- Hamburger Icon (for small screens) -->
-      <div class="hamburger" onclick="toggleMenu()">☰</div>
+    <!-- Hamburger Icon (for small screens) -->
+    <div class="hamburger" onclick="toggleMenu()">
+      <img
+        style="max-width: 40px; max-height: 20px"
+        src="/static/OIP.png"
+        alt="click me"
+        srcset=""
+      />
+    </div>
   </div>
 </nav>
 
-
-
 <script>
-    function toggleMenu() {
-        const navbar = document.querySelector('.navbar');
-        navbar.classList.toggle('active');
-    }
+  function toggleMenu() {
+    const navbar = document.querySelector(".navbar");
+    navbar.classList.toggle("active");
+  }
 </script>

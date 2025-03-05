@@ -139,7 +139,7 @@ def add_product():
 
 # Public homepage displaying all products
 @app.route('/')
-@admin_required
+# @admin_required
 def public_page():
     products = Product.query.all()
     return render_template('index.html', products=products)
