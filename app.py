@@ -79,7 +79,7 @@ def pay():
     product_id = request.form.get('productId')  # Get product ID
     product_name = request.form.get('productName')  # Get product name
     quantity = request.form.get('quantity')  # Get quantity from the form
-    upi_id = "9399613606@axl"  # Replace with your actual UPI ID
+    upi_id = "9399613606@axl"  # Replace with your UPI ID
     payee_name = "Sandesh Patel"
 
     # Create the UPI payment URL with product details
