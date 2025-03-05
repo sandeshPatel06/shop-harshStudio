@@ -88,7 +88,7 @@ def pay():
     return redirect(upi_url)  # Redirects user to installed UPI apps
 # Create admin user route
 @app.route('/create_admin', methods=['GET', 'POST'])
-# @admin_required
+@admin_required
 def create_admin():
     if request.method == 'POST':
         username = request.form['new_admin_username']
@@ -139,6 +139,7 @@ def add_product():
 
 # Public homepage displaying all products
 @app.route('/')
+@admin_required
 def public_page():
     products = Product.query.all()
     return render_template('index.html', products=products)
@@ -178,45 +179,49 @@ def delete_product(product_id):
 
     return redirect(url_for('admin'))
 
-# Add product to cart
-@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
+# Function to get the total number of items in the cart
+@app.route("/cart_count")
+def cart_count():
+    cart = session.get("cart", {})
+    count = sum(item["quantity"] for item in cart.values())
+    return jsonify({"count": count})
+
+# Route to add an item to the cart dynamically
+@app.route("/add_to_cart/<product_id>", methods=["POST"])
 def add_to_cart(product_id):
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({'message': 'Product not found'}), 404
-
-    if 'cart' not in session:
-        session['cart'] = {}
-
-    cart = session['cart']
-    if str(product_id) in cart:
-        cart[str(product_id)]['quantity'] += 1
+    cart = session.get("cart", {})
+    if product_id in cart:
+        cart[product_id]["quantity"] += 1
     else:
-        cart[str(product_id)] = {'name': product.name, 'price': product.price, 'quantity': 1}
-
-    session.modified = True
-    return jsonify({'message': 'Product added to cart', 'cart': cart})
-
-# View cart
-@app.route('/cart')
+        # Example product data, replace with actual database fetch
+        cart[product_id] = {"name": "Product " + product_id, "price": 10, "quantity": 1}
+    
+    session["cart"] = cart
+    return jsonify({"success": True, "cart": cart})
+# View Cart Route
+@app.route("/cart")
 def cart():
-    return render_template('cart.html', cart=session.get('cart', {}))
+    cart = session.get("cart", {})
+    return render_template("cart.html", cart=cart)
 
-# Remove product from cart
-@app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
+# Remove Item from Cart
+# Remove an item from the cart dynamically
+@app.route("/remove_from_cart/<product_id>", methods=["POST"])
 def remove_from_cart(product_id):
-    if 'cart' in session and str(product_id) in session['cart']:
-        del session['cart'][str(product_id)]
-        session.modified = True
-        return jsonify({'message': 'Product removed from cart', 'cart': session['cart']})
+    cart = session.get("cart", {})
+    if product_id in cart:
+        del cart[product_id]
+        session["cart"] = cart
+    return jsonify({"success": True})
 
-    return jsonify({'message': 'Product not found in cart'}), 404
-
-# Clear entire cart
-@app.route('/clear_cart', methods=['POST'])
+# Clear the cart dynamically
+@app.route("/clear_cart", methods=["POST"])
 def clear_cart():
-    session.pop('cart', None)
-    return render_template('cart.html', cart=session.get('cart', {}))
+    session["cart"] = {}
+    return jsonify({"success": True})
+
+# Run the application
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5500 ,host='0.0.0.0')
