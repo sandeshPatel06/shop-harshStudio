@@ -4,16 +4,32 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
+# import urllib.parse
+from flask_mail import Mail, Message
+from functools import wraps
+
+
 
 # Initialize the Flask application
 app = Flask(__name__)
 
 # Secret key for session management (should be kept secret in production)
 app.secret_key = 'your_secret_key'
+# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+db_path = os.path.join(os.path.expanduser("~"), "secure_directory", "product_management.db")
+
 
 # Configuration for file uploads
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Use Gmail's SMTP server
+app.config['MAIL_PORT'] = 587  # Gmail SMTP port
+app.config['MAIL_USE_TLS'] = True  # Use TLS encryption
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = ''  # Replace with your email
+app.config['MAIL_PASSWORD'] = ''  # Replace with your email password
+app.config['MAIL_DEFAULT_SENDER'] = 'patelbr5118s@gmail.com'  # Replace with your email
+
 
 # Database path (Stored locally on PC)
 db_path = os.path.join(os.getcwd(), "product_management.db")
@@ -30,7 +46,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # 'admin', 'seller', 'buyer'
 
 # Define the Product model for the database
 class Product(db.Model):
@@ -39,6 +55,9 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=False)
     image_path = db.Column(db.String(255), nullable=True)
+    seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # New column
+
+    seller = db.relationship('User', backref=db.backref('products', lazy=True))
 
 # Create database tables if they don't exist
 with app.app_context():
@@ -48,6 +67,16 @@ with app.app_context():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+def role_required(required_role):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'logged_in' not in session or session.get('role') != required_role:
+                flash('Unauthorized Access!', 'error')
+                return redirect(url_for('login'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 # User login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -57,13 +86,21 @@ def login():
 
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
-            session['logged_in'] = True
-            session['role'] = user.role
-            return redirect(url_for('admin') if user.role == 'admin' else url_for('public_page'))
+            session.permanent = True
+            session['user_id'] = user.id
+            session['role'] = user.role  # Store role in session
+            
+            if user.role == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            elif user.role == 'seller':
+                return redirect(url_for('seller_dashboard'))
+            else:
+                return redirect(url_for('buyer_dashboard'))
         else:
             flash('Invalid username or password', 'error')
 
     return render_template('login.html')
+
 
 # Decorator to restrict access to admin routes
 def admin_required(f):
@@ -73,19 +110,99 @@ def admin_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-@app.route('/pay', methods=['POST'])
-def pay():
-    amount = request.form.get('amount')  # Get amount from the form
-    product_id = request.form.get('productId')  # Get product ID
-    product_name = request.form.get('productName')  # Get product name
-    quantity = request.form.get('quantity')  # Get quantity from the form
-    upi_id = "9399613606@axl"  # Replace with your UPI ID
-    payee_name = "Sandesh Patel"
 
-    # Create the UPI payment URL with product details
-    upi_url = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR&tn=Payment for {product_name} (ID: {product_id}, Quantity: {quantity})"
+@app.route('/checkout')
+def checkout():
+    product_id = request.args.get('productId')
+    product_name = request.args.get('productName')
+    product_price = request.args.get('productPrice')
+    return render_template('checkout.html', product_id=product_id, product_name=product_name, product_price=product_price)
+
+
+# @app.route('/pay', methods=['POST'])
+# def pay():
+#     # Get product & user details
+#     product_id = request.form.get('productId')
+#     product_name = request.form.get('productName')
+#     product_price = request.form.get('amount')
+#     quantity = request.form.get('quantity')
     
-    return redirect(upi_url)  # Redirects user to installed UPI apps
+#     # Get user shipping details
+#     name = request.form.get('name')
+#     address = request.form.get('address')
+#     city = request.form.get('city')
+#     state = request.form.get('state')
+#     postal_code = request.form.get('postalCode')
+
+#     # Prepare email content
+#     subject = "New Order Received"
+#     recipient_email = "patelbr5118s@gmail.com"
+#     message_body = f"""
+#     🔔 **New Order Received!** 🔔
+    
+#     📌 **Product Details:**
+#     - Product Name: {product_name}
+#     - Product ID: {product_id}
+#     - Price: ₹{product_price}
+#     - Quantity: {quantity}
+    
+#     📍 **Shipping Details:**
+#     - Name: {name}
+#     - Address: {address}, {city}, {state} - {postal_code}
+
+#     💰 **Payment Amount:** ₹{product_price}
+#     """
+
+#     # Send email (You can comment this out during testing)
+#     try:
+#         msg = Message(subject, recipients=[recipient_email])
+#         msg.body = message_body
+#         mail.send(msg)
+#         print("✅ Email sent successfully!")
+#     except Exception as e:
+#         print(f"❌ Email failed to send: {e}")
+
+#     # Instead of redirecting to payment, show confirmation
+#     return render_template("order_confirmation.html", 
+#                            product_name=product_name, 
+#                            product_id=product_id, 
+#                            price=product_price, 
+#                            quantity=quantity, 
+#                            name=name, 
+#                            address=address, 
+#                            city=city, 
+#                            state=state, 
+#                            postal_code=postal_code)
+
+
+@app.route('/admin_dashboard')
+@role_required('admin')
+def admin_dashboard():
+    products = Product.query.all()  # Fetch all products
+    return render_template('admin_dashboard.html', products=products)
+
+
+@app.route('/seller_dashboard')
+@role_required('seller')
+def seller_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    seller_id = session.get('user_id')  # Get the logged-in seller's ID
+    products = Product.query.filter_by(seller_id=seller_id).all()  # Fetch only seller's products
+    
+    return render_template('seller_dashboard.html', products=products)
+
+@app.route('/buyer_dashboard')
+@role_required('buyer')
+def buyer_dashboard():
+    return render_template('buyer_dashboard.html')
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)  # Remove user_id from session
+    return redirect(url_for('login'))  # Redirect to the login page
+
+
 # Create admin user route
 @app.route('/create_admin', methods=['GET', 'POST'])
 @admin_required
@@ -99,28 +216,30 @@ def create_admin():
         flash('New admin created successfully!', 'success')
     
     return render_template('create_admin.html')
-
-# Create user route
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
-        username = request.form['new_username']
-        password = generate_password_hash(request.form['new_password'])
-        new_user = User(username=username, password=password, role='user')
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'])
+        role = request.form['role']  # Get role from form (admin, seller, buyer)
+
+        new_user = User(username=username, password=password, role=role)
         db.session.add(new_user)
         db.session.commit()
         flash('New user created successfully!', 'success')
-    
-    return render_template('create_user.html')
+
+    return render_template('register.html')
+
 
 # Add product route
 @app.route('/add_product', methods=['GET', 'POST'])
-@admin_required
+@role_required('seller')
 def add_product():
     if request.method == 'POST':
         name = request.form['name']
         price = float(request.form['price'])
         description = request.form['description']
+        seller_id = session.get('user_id')  # Get the seller's ID from session
         
         file = request.files['file']
         if file and allowed_file(file.filename):
@@ -128,28 +247,23 @@ def add_product():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
 
-            new_product = Product(name=name, price=price, description=description, image_path="uploads/" + filename)
+            new_product = Product(name=name, price=price, description=description, image_path="uploads/" + filename, seller_id=seller_id)
             db.session.add(new_product)
             db.session.commit()
             flash('Product added successfully!', 'success')
 
-            return redirect(url_for('admin'))
+            return redirect(url_for('seller_dashboard'))
 
     return render_template('add_product.html')
 
+
 # Public homepage displaying all products
 @app.route('/')
-# @admin_required
 def public_page():
-    products = Product.query.all()
+    products = Product.query.all()  # Fetch all products
     return render_template('index.html', products=products)
 
-# Admin dashboard
-@app.route('/admin')
-@admin_required
-def admin():
-    products = Product.query.all()
-    return render_template('admin.html', products=products)
+
 
 # View product details
 @app.route('/product/<int:product_id>')
@@ -166,18 +280,47 @@ def product_details(product_id):
     return jsonify({'error': 'Product not found'}), 404
 
 # Delete product route
-@app.route('/delete_product/<int:product_id>', methods=['POST'])
-@admin_required
-def delete_product(product_id):
-    product = Product.query.get(product_id)
-    if product:
-        if product.image_path and os.path.exists("static/" + product.image_path):
-            os.remove("static/" + product.image_path)
-        db.session.delete(product)
-        db.session.commit()
-        flash('Product deleted successfully!', 'success')
 
-    return redirect(url_for('admin'))
+@app.route('/manage_users')
+@role_required('admin')
+def manage_users():
+    users = User.query.all()  # Get all users
+    return render_template('manage_users.html', users=users)
+
+@app.route('/manage_products')
+@role_required('admin')
+def manage_products():
+    products = Product.query.all()  # Get all products
+    return render_template('manage_products.html', products=products)
+
+
+@app.route('/admin/view_products')
+@role_required('admin')
+def admin_view_products():
+    products = Product.query.all()
+    return render_template('view_products.html', products=products)
+
+@app.route('/admin/delete_product/<int:product_id>', methods=['POST'])
+@role_required('admin')
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product deleted successfully!", "success")
+    return redirect(url_for('admin_view_products'))
+@app.route('/admin/edit_product/<int:product_id>', methods=['GET', 'POST'])
+@role_required('admin')
+def edit_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    if request.method == 'POST':
+        product.name = request.form['name']
+        product.price = request.form['price']
+        product.description = request.form['description']
+        db.session.commit()
+        flash("Product updated successfully!", "success")
+        return redirect(url_for('admin_view_products'))
+    return render_template('edit_product.html', product=product)
+
 
 # Function to get the total number of items in the cart
 @app.route("/cart_count")
@@ -224,4 +367,5 @@ def clear_cart():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5500 ,host='0.0.0.0')
+    app.run(debug=os.getenv('FLASK_DEBUG', 'False') == 'True',host='0.0.0.0')
+    

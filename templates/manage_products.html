@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <h2>Manage Products</h2>
+
+        {% if products %}
+            <table border="1">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Seller ID</th>
+                    <th>Actions</th>
+                </tr>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>₹{{ product.price }}</td>
+                    <td>{{ product.seller_id }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn">Edit</a> |
+                        <a href="{{ url_for('delete_product', product_id=product.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No products available.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

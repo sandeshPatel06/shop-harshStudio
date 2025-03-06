@@ -2,11 +2,13 @@
   <h1>Our Products</h1>
   <div id="messageBox" class="message-box"></div>
   <div class="row">
-    {% if products %} {% for product in products %}
+    {% if products %} 
+    {% for product in products %}
     <div class="product-card">
       <img
         src="{{ url_for('static', filename=product.image_path) }}"
-        alt="{{ product.name }}" onclick="viewProductDetails('{{ product.id }}')"
+        alt="{{ product.name }}" 
+        onclick="viewProductDetails('{{ product.id }}')"
       />
       <h3>{{ product.name }}</h3>
       <p><strong>Price:</strong> ${{ product.price }}</p>
@@ -15,7 +17,7 @@
       </button>
       <button
         class="btn buy-now"
-        onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')"
+        onclick="redirectToCheckout('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')"
       >
         Buy Now
       </button>
@@ -25,36 +27,35 @@
       >
         View Details
       </button>
-      <!-- New button -->
     </div>
-    {% endfor %} {% else %}
+    {% endfor %} 
+    {% else %}
     <div class="alert" role="alert">No products available.</div>
     {% endif %}
   </div>
 </div>
-<style></style>
+
+
+
 <!-- Product Details Modal -->
 {% for product in products %}
 <div id="productDetailsModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
-    <!-- <img
-      src="{{ url_for('static', filename=product.image_path) }}"
-      alt="{{ product.name }}"
-    /> -->
     <div id="productDetailsContent"></div>
     <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">
       Add to Cart
     </button>
     <button
       class="btn buy-now"
-      onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')"
+      onclick="redirectToCheckout('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')"
     >
       Buy Now
     </button>
   </div>
 </div>
 {% endfor %}
+
 <!-- Order Summary Modal -->
 <div id="orderSummaryModal" class="modal">
   <div class="modal-content">
@@ -62,3 +63,11 @@
     <div id="orderSummaryContent"></div>
   </div>
 </div>
+
+<!-- JavaScript for Redirect -->
+<script>
+  function redirectToCheckout(productId, productName, productPrice) {
+      const url = `/checkout?productId=${productId}&productName=${encodeURIComponent(productName)}&productPrice=${productPrice}`;
+      window.location.href = url;
+  }
+</script>
