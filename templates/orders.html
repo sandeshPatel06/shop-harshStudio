@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <h2>Order History</h2>
+        <ul>
+            {% for order in orders %}
+            <li>Order #{{ order.id }} - {{ order.status }} - ₹{{ order.total_price }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

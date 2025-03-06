@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <h2>Edit Profile</h2>
+        <form action="{{ url_for('edit_profile') }}" method="POST">
+            <label>Username:</label>
+            <input type="text" name="username" value="{{ current_user.username }}" required>
+            
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ current_user.email }}" required>
+            
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+</body>
+</html>
