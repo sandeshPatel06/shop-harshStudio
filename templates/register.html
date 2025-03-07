@@ -52,7 +52,7 @@
         
         <form action="{{ url_for('create_user') }}" method="POST">
             <div class="form-group">
-                <label for="username">Mobile No.</label>
+                <label for="username">Mobile No. / Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
             
@@ -66,7 +66,7 @@
                 <select class="form-control" id="role" name="role" required>
                     <option value="buyer">Buyer</option>
                     <option value="seller">Seller</option>
-                    <option value="admin">Admin</option>
+                    <!-- <option value="admin">Admin</option> -->
                 </select>
             </div>
 

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+
+    <!-- Include CSS -->
+    {% include 'header.html' %}
+    <style>
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin-top: 10px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+        }
+        .btn-save { background-color: #28a745; }
+        .btn-cancel { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <h2>Edit User</h2>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('edit_user', user_id=user.id) }}" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="{{ user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    <option value="seller" {% if user.role == 'seller' %}selected{% endif %}>Seller</option>
+                    <option value="buyer" {% if user.role == 'buyer' %}selected{% endif %}>Buyer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-save">Save Changes</button>
+                <a href="{{ url_for('manage_users') }}" class="btn btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+</body>
+</html>

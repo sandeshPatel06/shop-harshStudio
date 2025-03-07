@@ -29,7 +29,9 @@
                     <td>{{ product.seller_id }}</td>
                     <td>
                         <a href="{{ url_for('edit_product', product_id=product.id) }}">Edit</a> |
-                        <a href="{{ url_for('delete_product', product_id=product.id) }}" onclick="return confirm('Are you sure?')">Delete</a>
+                        <form action="/delete_product/{{ product.id }}" method="post">
+                            <button type="submit" class="btn">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
