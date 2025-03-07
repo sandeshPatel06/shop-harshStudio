@@ -7,41 +7,7 @@
     
     <!-- Include your CSS and other head elements -->
     {% include 'header.html' %}
-    <style>
-        /* Improved styling */
-        .container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .btn:hover {
-            background: #0056b3;
-        }
-    </style>
+  
 </head>
 <body>
 
@@ -66,11 +32,22 @@
                 <select class="form-control" id="role" name="role" required>
                     <option value="buyer">Buyer</option>
                     <option value="seller">Seller</option>
+                    <!-- <option value="admin">admin</option> -->
                     <!-- <option value="admin">Admin</option> -->
                 </select>
             </div>
 
-            <button type="submit" class="btn">Create Account</button>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Account</button>
         </form>
     </div>
 

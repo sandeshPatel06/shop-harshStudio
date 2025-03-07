@@ -1,0 +1,17 @@
+<h2>Order History</h2>
+<table border="1">
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Date Ordered</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.product.name }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.date_ordered.strftime('%Y-%m-%d') }}</td>
+    </tr>
+    {% endfor %}
+</table>

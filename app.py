@@ -46,6 +46,21 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'admin', 'seller', 'buyer'
+    email = db.Column(db.String(100), unique=True, nullable=True)
+    address = db.Column(db.Text, nullable=True)
+
+    orders = db.relationship('Order', backref='buyer', lazy=True)  # Relationship with Order
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    buyer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    status = db.Column(db.String(50), default="Processing")  # Order status (Processing, Shipped, Delivered)
+    date_ordered = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    product = db.relationship('Product', backref='orders')
 
 # Define the Product model for the database
 class Product(db.Model):
@@ -144,12 +159,41 @@ def delete_user(user_id):
     return redirect(url_for('manage_users'))
 
 
-@app.route('/checkout')
+@app.route('/checkout', methods=['POST'])
+@role_required('buyer')
 def checkout():
-    product_id = request.args.get('productId')
-    product_name = request.args.get('productName')
-    product_price = request.args.get('productPrice')
-    return render_template('checkout.html', product_id=product_id, product_name=product_name, product_price=product_price)
+    product_id = request.form['product_id']
+    quantity = int(request.form['quantity'])
+
+    new_order = Order(
+        buyer_id=session['user_id'],
+        product_id=product_id,
+        quantity=quantity,
+        status="Processing"
+    )
+
+    db.session.add(new_order)
+    db.session.commit()
+    flash("Order placed successfully!", "success")
+
+    return redirect(url_for('order_history'))
+
+@app.route('/admin/orders')
+@role_required('admin')
+def manage_orders():
+    orders = Order.query.all()
+    return render_template('admin_orders.html', orders=orders)
+
+
+@app.route('/admin/update_order/<int:order_id>', methods=['POST'])
+@role_required('admin')
+def update_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    order.status = request.form['status']
+    db.session.commit()
+    flash("Order status updated!", "success")
+    return redirect(url_for('manage_orders'))
+
 
 
 @app.route('/admin_dashboard')
@@ -179,20 +223,30 @@ def logout():
     session.pop('user_id', None)  # Remove user_id from session
     return redirect(url_for('login'))  # Redirect to the login page
 
+@app.route('/profile', methods=['GET', 'POST'])
+@role_required('buyer')
+def profile():
+    user = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        user.username = request.form['username']
+        user.email = request.form['email']
+        user.address = request.form['address']
+        db.session.commit()
+        flash("Profile updated successfully!", "success")
+
+    return render_template('profile.html', user=user)
+
+@app.route('/order_history')
+@role_required('buyer')
+def order_history():
+    orders = Order.query.filter_by(buyer_id=session['user_id']).all()
+    return render_template('order_history.html', orders=orders)
+
+
 
 # Create admin user route
-@app.route('/create_admin', methods=['GET', 'POST'])
-@admin_required
-def create_admin():
-    if request.method == 'POST':
-        username = request.form['new_admin_username']
-        password = generate_password_hash(request.form['new_admin_password'])
-        new_admin = User(username=username, password=password, role='admin')
-        db.session.add(new_admin)
-        db.session.commit()
-        flash('New admin created successfully!', 'success')
-    
-    return render_template('create_admin.html')
+
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
@@ -339,5 +393,5 @@ def clear_cart():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',debug=True)
     
