@@ -35,7 +35,15 @@ body {
         text-decoration: none;
         font-size: 24px;
         font-weight: bold;
+        transition: transform 0.3s ease, color 0.3s ease; /* Add smooth transitions */
       }
+      
+      .navbar-brand:hover {
+        transform: scale(1.1); /* Slightly enlarge the navbar-brand on hover */
+        color: #4a4896; /* Change color on hover */
+        text-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Add glowing effect */
+      }
+      
 
       /* Navbar Links Container */
       .navbar-links {
@@ -59,7 +67,9 @@ body {
 
       .navbar-links a:hover,
       .navbar-links a.active {
-        background-color: #555; /* Active or hovered link color */
+         transform: scale(1.1); /* Slightly enlarge the navbar-brand on hover */
+        color: #4a4896; /* Change color on hover */
+        text-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Add glowing effect */
       }
 
       /* Media Query for Responsiveness */
@@ -858,7 +868,7 @@ button:hover {
   }
   
   .footer-column .social-icons a {
-    font-size: 20px;
+    font-size: 40px;
     color: #fff;
     transition: color 0.3s ease;
   }

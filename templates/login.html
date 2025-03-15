@@ -1,47 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-<style></style>
-    <!-- Include your CSS and other head elements -->
-    {% include 'header.html' %}
-  </head>
-  <body>
-    <!-- Include the navigation bar -->
-    {% include 'navbar.html' %}
 
-    <div class="login-container">
-      <h2>Login</h2>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <style></style>
+  <!-- Include your CSS and other head elements -->
+  {% include 'header.html' %}
+</head>
 
-      <!-- Display flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %}
+<body>
+  <!-- Include the navigation bar -->
+  {% include 'navbar.html' %}
 
-      <form action="{{ url_for('login') }}" method="post">
-        <div class="form-group">
-          <label for="username"> <b>Mobile No. /  Username </b></label>
-          <input type="text" id="username" name="username" required />
-        </div>
-        <div class="form-group">
-          <label for="password"><b>Password </b></label>
-          <input type="password" id="password" name="password" required />
-        </div>
-        <div class="form-group">
-          <button type="submit">Login</button>
-        </div>
-      </form>
-      <a href="/create_user" class="btn">Register</a>
+  <div class="login-container">
+    <h2>Login</h2>
+
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
     </div>
+    {% endif %} {% endwith %}
 
-    <!-- Include the footer -->
-    {% include 'footer.html' %}
-  </body>
+    <form action="{{ url_for('login') }}" method="post">
+      <div class="form-group">
+        <label for="username"> <b>Mobile No. / Username </b></label>
+        <input type="text" id="username" name="username" required />
+      </div>
+      <div class="form-group">
+        <label for="password"><b>Password </b></label>
+        <input type="password" id="password" name="password" required />
+      </div>
+      <div class="form-group">
+        <button type="submit">Login</button>
+      </div>
+    </form>
+    <a href="/create_user" class="btn">Register</a>
+  </div>
+
+  <!-- Include the footer -->
+  {% include 'footer.html' %}
+</body>
+<script>
+  function showAlert(message) {
+    if (message) {
+      alert(message);
+    }
+  }
+  // showAlert("{{ error_message }}");
+</script>
+
 </html>

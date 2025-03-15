@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 import urllib.parse
-from flask_mail import Mail, Message
+# from flask_mail import Mail, Message
 from functools import wraps
 
 
@@ -21,13 +21,13 @@ app.secret_key = 'your_secret_key'
 # Configuration for file uploads
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Use Gmail's SMTP server
-app.config['MAIL_PORT'] = 587  # Gmail SMTP port
-app.config['MAIL_USE_TLS'] = True  # Use TLS encryption
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = ''  # Replace with your email
-app.config['MAIL_PASSWORD'] = ''  # Replace with your email password
-app.config['MAIL_DEFAULT_SENDER'] = 'patelbr5118s@gmail.com'  # Replace with your email
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Use Gmail's SMTP server
+# app.config['MAIL_PORT'] = 587  # Gmail SMTP port
+# app.config['MAIL_USE_TLS'] = True  # Use TLS encryption
+# app.config['MAIL_USE_SSL'] = False
+# app.config['MAIL_USERNAME'] = ''  # Replace with your email
+# app.config['MAIL_PASSWORD'] = ''  # Replace with your email password
+# app.config['MAIL_DEFAULT_SENDER'] = 'patelbr5118s@gmail.com'  # Replace with your email
 
 
 # Database path (Stored locally on PC)
@@ -89,8 +89,8 @@ def role_required(required_role):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if 'logged_in' not in session or session.get('role') != required_role:
-                flash('Unauthorized Access!', 'error')
-                return redirect(url_for('login'))
+                # flash('Unauthorized Access!', 'error')
+                return redirect(url_for('login'),error_message='Unauthorized Access!')
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -106,7 +106,7 @@ def login():
             session.permanent = True
             session['user_id'] = user.id
             session['role'] = user.role
-            session['logged_in'] = True  # Add this line
+            session['logged_in'] = True  # Add this line if user present
 
             flash("Login successful!", "success")
 
@@ -133,6 +133,25 @@ def admin_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+def seller_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session or session.get('role') != 'seller':
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+def get_current_user_role():
+    return session.get('role')  # Returns 'admin', 'seller', or None
+def role_required(allowed_roles):
+    def wrapper(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'logged_in' not in session or session.get('role') not in allowed_roles:
+                return redirect(url_for('login'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return wrapper
+
 
 @app.route('/manage_users')
 def manage_users():
@@ -157,7 +176,6 @@ def delete_user(user_id):
     db.session.commit()
     flash("User deleted successfully", "danger")
     return redirect(url_for('manage_users'))
-
 
 @app.route('/checkout', methods=['POST'])
 @role_required('buyer')
@@ -312,12 +330,27 @@ def product_details(product_id):
 
 # Delete product route
 
+
 @app.route('/manage_products')
-@role_required('admin')
+@role_required(['admin', 'seller'])  # Allows access for both admin and seller roles
 def manage_products():
     products = Product.query.all()  # Get all products
-    return render_template('manage_products.html', products=products)
+    user_role = get_current_user_role()  # Get the role of the current user
+    return render_template('manage_products.html', products=products, user_role=user_role)
+@app.route('/user/delete_product/<int:product_id>', methods=['POST'])
+@role_required(['admin', 'seller'])  # Allow both admin and seller roles
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    
+    # Check additional conditions if needed (e.g., sellers can only delete their own products)
+    if session.get('role') == 'seller' and product.seller_id != session.get('user_id'):
+        flash("You are not authorized to delete this product.", "error")
+        return redirect(url_for('manage_products'))  # Redirect to a safer route
 
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product deleted successfully!", "success")
+    return redirect(url_for('manage_products'))
 
 @app.route('/admin/view_products')
 @role_required('admin')
@@ -325,18 +358,14 @@ def admin_view_products():
     products = Product.query.all()
     return render_template('view_products.html', products=products)
 
-@app.route('/admin/delete_product/<int:product_id>', methods=['POST'])
-@role_required('admin')
-def delete_product(product_id):
-    product = Product.query.get_or_404(product_id)
-    db.session.delete(product)
-    db.session.commit()
-    flash("Product deleted successfully!", "success")
-    return redirect(url_for('admin_view_products'))
+@app.route('/seller/view_products')
+@role_required('seller')
+def seller_view_products():
+    products = Product.query.all()
+    return render_template('view_products.html', products=products)
 
-@app.route('/admin/edit_product/<int:product_id>', methods=['GET', 'POST'])
-@role_required('admin')
-def edit_product(product_id):
+
+def handle_product_edit(product_id):
     product = Product.query.get_or_404(product_id)
     if request.method == 'POST':
         product.name = request.form['name']
@@ -344,7 +373,23 @@ def edit_product(product_id):
         product.description = request.form['description']
         db.session.commit()
         flash("Product updated successfully!", "success")
+        return True, product
+    return False, product
+
+@app.route('/admin/edit_product/<int:product_id>', methods=['GET', 'POST'])
+@role_required('admin')
+def edit_product(product_id):
+    updated, product = handle_product_edit(product_id)
+    if updated:
         return redirect(url_for('admin_view_products'))
+    return render_template('edit_product.html', product=product)
+
+@app.route('/seller/edit_product/<int:product_id>', methods=['GET', 'POST'])
+@role_required('seller')
+def seller_edit_product(product_id):
+    updated, product = handle_product_edit(product_id)
+    if updated:
+        return redirect(url_for('seller_view_products'))
     return render_template('edit_product.html', product=product)
 
 

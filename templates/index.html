@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movement Makers</title>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
     {% include 'header.html' %}
     <style></style>
   </head>
@@ -11,6 +13,5 @@
     {% include 'navbar.html' %} {% include 'products.html' %} {% include
     'footer.html' %}
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

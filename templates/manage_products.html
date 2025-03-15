@@ -12,7 +12,7 @@
 
     <div class="container">
         <h2>Manage Products</h2>
-
+    
         {% if products %}
             <table border="1">
                 <tr>
@@ -29,10 +29,17 @@
                     <td>₹{{ product.price }}</td>
                     <td>{{ product.seller_id }}</td>
                     <td>
-                        <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn">Edit</a> |
-                        <form action="/delete_product/{{ product.id }}" method="post">
-                            <button type="submit" class="btn">Delete</button>
-                        </form>
+                        {% if user_role == 'admin' %}
+                            <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn">Edit</a> |
+                            <form action="{{ url_for('admin_delete_product', product_id=product.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn">Delete</button>
+                            </form>
+                        {% elif user_role == 'seller' %}
+                            <a href="{{ url_for('seller_edit_product', product_id=product.id) }}" class="btn">Edit</a> |
+                            <form action="{{ url_for('seller_delete_product', product_id=product.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn">Delete</button>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -41,6 +48,6 @@
             <p>No products available.</p>
         {% endif %}
     </div>
-
+    
 </body>
 </html>
