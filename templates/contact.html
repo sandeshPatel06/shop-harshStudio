@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        input[type="email"],
+        textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            resize: vertical;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .thank-you-message {
+            font-size: 1.2rem;
+            color: #27ae60;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .error-message {
+            font-size: 1.2rem;
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Contact Us</h1>
+        <form id="contactForm" action="https://formspree.io/f/xblgzddg" method="POST">
+            <label for="email">
+                Your Email:
+                <input type="email" id="email" name="email" placeholder="Enter your email" required aria-label="Email Address">
+            </label>
+            <label for="message">
+                Your Problem:
+                <textarea id="message" name="message" rows="5" placeholder="Describe your issue" required aria-label="Message"></textarea>
+            </label>
+            <button type="submit">Send</button>
+        </form>
+        <div class="thank-you-message" id="thankYouMessage" style="display:none;">
+            Thank you for reaching out! We will get back to you shortly.
+        </div>
+        <div class="error-message" id="errorMessage" style="display:none;">
+            Something went wrong. Please try again.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the default form submission (page reload)
+
+            var email = document.getElementById('email').value;
+            var message = document.getElementById('message').value;
+
+            // Simple validation (you can customize further)
+            if (!email || !message) {
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            // Prepare form data
+            var formData = new FormData();
+            formData.append('email', email);
+            formData.append('message', message);
+
+            // Hide error message and show success message
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('thankYouMessage').style.display = 'block';
+
+            // Send data using Fetch API
+            fetch('https://formspree.io/f/xblgzddg', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'  // Inform Formspree that we want the response in JSON format
+                }
+            })
+            .then(response => response.json()) // Convert the response to JSON
+            .then(data => {
+                if (data.ok) {
+                    // Optionally hide success message after 3 seconds (for user experience)
+                    setTimeout(function() {
+                        document.getElementById('thankYouMessage').style.display = 'none';
+                    }, 3000);
+                } else {
+                    // If Formspree returns an error
+                    throw new Error('Error while submitting');
+                }
+            })
+            .catch(error => {
+                // Show error message if something went wrong
+                document.getElementById('thankYouMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+            });
+        });
+    </script>
+
+</body>
+</html>

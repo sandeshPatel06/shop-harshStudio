@@ -95,6 +95,9 @@ def role_required(required_role):
         return decorated_function
     return decorator
 # User login route
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -123,6 +126,46 @@ def login():
             flash("Unauthorized Access!", "error")
 
     return render_template('login.html')
+
+
+@app.route('/store_product_in_session', methods=['POST'])
+def store_product_in_session():
+    data = request.get_json()
+    session['product_id'] = data['id']
+    session['product_name'] = data['name']
+    session['product_price'] = data['price']
+    return jsonify({'success': True}), 200
+
+@app.route('/checkout', methods=['GET', 'POST'])
+@role_required('buyer')
+def checkout():
+    # Retrieve product details from session
+    product_id = session.get('product_id')
+    product_name = session.get('product_name')
+    product_price = session.get('product_price')
+
+    if request.method == 'POST':
+        quantity = int(request.form['quantity'])
+
+        # Create a new order in the database
+        new_order = Order(
+            buyer_id=session['user_id'],
+            product_id=product_id,
+            quantity=quantity,
+            status="Processing"
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        flash("Order placed successfully!", "success")
+
+        # Redirect to order history or another page
+        return redirect(url_for('order_history'))
+
+    # Render checkout page with product details
+    return render_template('checkout.html', 
+                           product_name=product_name, 
+                           product_price=product_price)
+
 
 
 # Decorator to restrict access to admin routes
@@ -177,24 +220,6 @@ def delete_user(user_id):
     flash("User deleted successfully", "danger")
     return redirect(url_for('manage_users'))
 
-@app.route('/checkout', methods=['POST'])
-@role_required('buyer')
-def checkout():
-    product_id = request.form['product_id']
-    quantity = int(request.form['quantity'])
-
-    new_order = Order(
-        buyer_id=session['user_id'],
-        product_id=product_id,
-        quantity=quantity,
-        status="Processing"
-    )
-
-    db.session.add(new_order)
-    db.session.commit()
-    flash("Order placed successfully!", "success")
-
-    return redirect(url_for('order_history'))
 
 @app.route('/admin/orders')
 @role_required('admin')

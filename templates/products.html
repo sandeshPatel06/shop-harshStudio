@@ -27,37 +27,28 @@
   </div>
 </div>
 
-
-
-<!-- Product Details Modal -->
-{% for product in products %}
-<div id="productDetailsModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <div id="productDetailsContent"></div>
-    <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">
-      Add to Cart
-    </button>
-    <button class="btn buy-now"
-      onclick="buynow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">
-      Buy Now
-    </button>
-  </div>
-</div>
-{% endfor %}
-
-<!-- Order Summary Modal -->
-<div id="orderSummaryModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeOrderSummaryModal()">&times;</span>
-    <div id="orderSummaryContent"></div>
-  </div>
-</div>
-
-<!-- JavaScript for Redirect -->
 <script>
-  function redirectToCheckout(productId, productName, productPrice) {
-    const url = `/checkout?productId=${productId}&productName=${encodeURIComponent(productName)}&productPrice=${productPrice}`;
-    window.location.href = url;
-  }
+// Function for the Buy Now button to redirect to checkout
+function buyNow(productId, productName, productPrice) {
+  // Save the product details to session via AJAX
+  fetch('/store_product_in_session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      productId: productId,
+      productName: productName,
+      productPrice: productPrice,
+    }),
+  })
+  .then(response => {
+    if (response.ok) {
+      // After saving to session, redirect to checkout page
+      window.location.href = '/checkout';
+    } else {
+      alert('Failed to add product to cart');
+    }
+  });
+}
 </script>
