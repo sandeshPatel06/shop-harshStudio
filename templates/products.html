@@ -1,34 +1,26 @@
 <div class="container">
-  <h1>Our Products</h1>
+  <h1>PHOTO FRAMES</h1>
   <div id="messageBox" class="message-box"></div>
   <div class="row">
-    {% if products %} 
+    {% if products %}
     {% for product in products %}
     <div class="product-card">
-      <img
-        src="{{ url_for('static', filename=product.image_path) }}"
-        alt="{{ product.name }}" 
-        onclick="viewProductDetails('{{ product.id }}')"
-      />
+      <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}"
+        onclick="viewProductDetails('{{ product.id }}')" />
       <h3>{{ product.name }}</h3>
       <p><strong>Price:</strong> ${{ product.price }}</p>
       <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">
         Add to Cart
       </button>
-      <button
-        class="btn buy-now"
-        onclick="redirectToCheckout('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')"
-      >
+      <button class="btn buy-now"
+        onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">
         Buy Now
       </button>
-      <button
-        class="btn view-details"
-        onclick="viewProductDetails('{{ product.id }}')"
-      >
+      <button class="btn view-details" onclick="viewProductDetails('{{ product.id }}')">
         View Details
       </button>
     </div>
-    {% endfor %} 
+    {% endfor %}
     {% else %}
     <div class="alert" role="alert">No products available.</div>
     {% endif %}
@@ -46,10 +38,8 @@
     <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">
       Add to Cart
     </button>
-    <button
-      class="btn buy-now"
-      onclick="redirectToCheckout('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')"
-    >
+    <button class="btn buy-now"
+      onclick="buynow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">
       Buy Now
     </button>
   </div>
@@ -67,7 +57,7 @@
 <!-- JavaScript for Redirect -->
 <script>
   function redirectToCheckout(productId, productName, productPrice) {
-      const url = `/checkout?productId=${productId}&productName=${encodeURIComponent(productName)}&productPrice=${productPrice}`;
-      window.location.href = url;
+    const url = `/checkout?productId=${productId}&productName=${encodeURIComponent(productName)}&productPrice=${productPrice}`;
+    window.location.href = url;
   }
 </script>
