@@ -10,7 +10,7 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand ms-3" href="#">Admin Dashboard</a>
+        <a class="navbar-brand ms-3" href="#">Seller Dashboard</a>
         <a class="btn btn-danger me-3" href="{{ url_for('logout') }}">Logout</a>
     </nav>
 
@@ -41,6 +41,7 @@
                                 <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>Processing</option>
                                 <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
                                 <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
                             </select>
                             <button type="submit" class="btn btn-primary mt-2">Update</button>
                         </form>

@@ -7,8 +7,23 @@
     </a>
     <ul class="navbar-links" id="nav-links">
       <li><a href="/" class="active">Home</a></li>
-      <li><a href="/login">Login</a></li>
-      <li><a href="#about">About</a></li>
+      
+      {% if session.get('user_id') %}
+        <!-- If user is logged in, show their role with a clickable link -->
+        <li>
+          <a href="{{ url_for(session['role'] + '_dashboard') }}" class="role-link" style="background-color: rgb(16, 25, 32);">
+            {{ session['role'].capitalize() }} Dashboard
+          </a>
+        </li>
+        <li>
+          <a class="" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      {% else %}
+        <!-- If user is not logged in, show Login button -->
+        <li><a href="{{ url_for('login') }}" class="">Login</a></li>
+      {% endif %}
+
+      
       <li><a href="/contact">Contact</a></li>
       <li>
         <a href="/cart">
@@ -23,7 +38,6 @@
         style="max-width: 40px; max-height: 20px"
         src="/static/OIP.png"
         alt="click me"
-        srcset=""
       />
     </div>
   </div>

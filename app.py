@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 import urllib.parse
 # from flask_mail import Mail, Message
 from functools import wraps
+from flask_migrate import Migrate
 
 
 
@@ -39,15 +40,27 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the SQLAlchemy database instance
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Define the User model for the database
+class Address(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    address_line = db.Column(db.String(255), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    state = db.Column(db.String(100), nullable=True)
+    zip_code = db.Column(db.String(20), nullable=True)
+
+    # Relationship with User: one-to-one (each user has one address)
+    user = db.relationship('User', backref=db.backref('address', uselist=False))
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'admin', 'seller', 'buyer'
     email = db.Column(db.String(100), unique=True, nullable=True)
-    address = db.Column(db.Text, nullable=True)
 
     orders = db.relationship('Order', backref='buyer', lazy=True)  # Relationship with Order
 
@@ -144,24 +157,46 @@ def checkout():
     product_name = session.get('product_name')
     product_price = session.get('product_price')
 
+    # If no product is found in the session, redirect to product listing page
+    if not product_id:
+        flash("No product selected.", "danger")
+        return redirect(url_for('public_page'))  # Redirect to product listing
+
+    # Fetch product from the database
+    product = Product.query.get(product_id)
+    if not product:
+        flash("Product not found.", "danger")
+        return redirect(url_for('public_page'))
+
+    # Handle POST request when user submits the order
     if request.method == 'POST':
-        quantity = int(request.form['quantity'])
+        try:
+            # Get the quantity from the form
+            quantity = int(request.form['quantity'])
 
-        # Create a new order in the database
-        new_order = Order(
-            buyer_id=session['user_id'],
-            product_id=product_id,
-            quantity=quantity,
-            status="Processing"
-        )
-        db.session.add(new_order)
-        db.session.commit()
-        flash("Order placed successfully!", "success")
 
-        # Redirect to order history or another page
-        return redirect(url_for('order_history'))
+            # Create a new order
+            new_order = Order(
+                buyer_id=session['user_id'],  # The logged-in user ID
+                product_id=product_id,        # The product being ordered
+                quantity=quantity,            # The quantity being ordered
+                status="Processing"           # Initial status of the order
+            )
 
-    # Render checkout page with product details
+            # Add the order to the database and commit
+            db.session.add(new_order)
+            db.session.commit()
+
+
+            # Flash success message and redirect to order history page
+            flash("Order placed successfully!", "success")
+            return redirect(url_for('order_history'))
+
+        except ValueError:
+            flash("Invalid quantity. Please enter a valid number.", "danger")
+            return redirect(url_for('checkout'))  # Redirect back to checkout page
+
+    # Render the checkout page with product details
     return render_template('checkout.html', 
                            product_name=product_name, 
                            product_price=product_price)
@@ -194,6 +229,18 @@ def role_required(allowed_roles):
             return f(*args, **kwargs)
         return decorated_function
     return wrapper
+@app.route('/admin/orders')
+@role_required('admin')  # Ensure the user is an admin
+def admin_orders():
+    orders = Order.query.all()  # Admin can view all orders
+    return render_template('admin_orders.html', orders=orders)
+
+@app.route('/seller/orders')
+@role_required('seller')  # Ensure the user is a seller
+def seller_orders():
+    seller_id = session.get('user_id')
+    orders = Order.query.join(Product).filter(Product.seller_id == seller_id).all()  # Filter by seller ID
+    return render_template('seller_orders.html', orders=orders)
 
 
 @app.route('/manage_users')
@@ -221,22 +268,26 @@ def delete_user(user_id):
     return redirect(url_for('manage_users'))
 
 
-@app.route('/admin/orders')
-@role_required('admin')
-def manage_orders():
-    orders = Order.query.all()
-    return render_template('admin_orders.html', orders=orders)
-
-
-@app.route('/admin/update_order/<int:order_id>', methods=['POST'])
-@role_required('admin')
+@app.route('/update_order/<int:order_id>', methods=['POST'])
+@role_required(['admin', 'seller'])  # Ensure the user is either admin or seller
 def update_order(order_id):
     order = Order.query.get_or_404(order_id)
+    
+    # Ensure that a seller can only update orders for products they have sold
+    if session['role'] == 'seller' and order.product.seller_id != session['user_id']:
+        flash("You are not authorized to update this order.", "error")
+        return redirect(url_for('seller_orders'))
+    
+    # Update the order status
     order.status = request.form['status']
     db.session.commit()
     flash("Order status updated!", "success")
-    return redirect(url_for('manage_orders'))
-
+    
+    # Redirect based on the user's role
+    if session['role'] == 'admin':
+        return redirect(url_for('admin_orders'))
+    else:
+        return redirect(url_for('seller_orders'))
 
 
 @app.route('/admin_dashboard')
@@ -260,7 +311,8 @@ def seller_dashboard():
 @app.route('/buyer_dashboard')
 @role_required('buyer')
 def buyer_dashboard():
-    return render_template('buyer_dashboard.html')
+     products = Product.query.all()  # Fetch all products
+     return render_template('buyer_dashboard.html', products=products)
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)  # Remove user_id from session
@@ -289,18 +341,39 @@ def order_history():
 
 
 # Create admin user route
-
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
+        # Get data from the form
         username = request.form['username']
-        password = generate_password_hash(request.form['password'])
+        password = generate_password_hash(request.form['password'])  # Hash the password
         role = request.form['role']  # Get role from form (admin, seller, buyer)
+        email = request.form.get('email')  # Optional field
+        name = request.form['name']
+        address_line = request.form['address_line']
+        city = request.form['city']
+        state = request.form['state']
+        zip_code = request.form['zip_code']
 
-        new_user = User(username=username, password=password, role=role)
+        # Create a new User object
+        new_user = User(
+            username=username,
+            password=password,
+            role=role,
+            email=email,
+            name=name,
+            address_line=address_line,
+            city=city,
+            state=state,
+            zip_code=zip_code
+        )
+
+        # Add user to the database
         db.session.add(new_user)
         db.session.commit()
+
         flash('New user created successfully!', 'success')
+        return redirect(url_for('login'))  # Redirect to login page after creation
 
     return render_template('register.html')
 
@@ -336,23 +409,26 @@ def add_product():
 def public_page():
     products = Product.query.all()  # Fetch all products
     return render_template('index.html', products=products)
-
-
-
 # View product details
 @app.route('/product/<int:product_id>')
 def product_details(product_id):
-    product = Product.query.get(product_id)
-    if product:
-        return jsonify({
-            'id': product.id,
-            'name': product.name,
-            'price': product.price,
-            'description': product.description,
-            'image_url': url_for('static', filename=product.image_path)  # Include the full image URL
-        })
-    return jsonify({'error': 'Product not found'}), 404
-
+    try:
+        product = Product.query.get(product_id)
+        if product:
+            return jsonify({
+                'id': product.id,
+                'name': product.name,
+                'price': product.price,
+                'description': product.description,
+                'image_url': url_for('static', filename=product.image_path)  # Full URL to image
+            })
+        else:
+            # Product not found
+            return jsonify({'error': 'Product not found'}), 404
+    except Exception as e:
+        # Log the error (optional)
+        app.logger.error(f"Error fetching product {product_id}: {e}")
+        return jsonify({'error': 'An error occurred while fetching product details'}), 500
 # Delete product route
 
 
@@ -426,22 +502,67 @@ def cart_count():
     return jsonify({"count": count})
 
 # Route to add an item to the cart dynamically
-@app.route("/add_to_cart/<product_id>", methods=["POST"])
+@app.route("/add_to_cart/<int:product_id>", methods=["POST"])
 def add_to_cart(product_id):
     cart = session.get("cart", {})
+
+    # Check if the product is already in the cart
     if product_id in cart:
-        cart[product_id]["quantity"] += 1
+        cart[product_id]["quantity"] += 1  # Increase quantity if already in cart
     else:
-        # Example product data, replace with actual database fetch
-        cart[product_id] = {"name": "Product " + product_id, "price": 10, "quantity": 1}
-    
+        # Fetch product details from the database
+        product = Product.query.get(product_id)
+        if product:
+            cart[product_id] = {"name": product.name, "price": product.price, "quantity": 1}
+
     session["cart"] = cart
     return jsonify({"success": True, "cart": cart})
+
+# Update Address in Cart
+@app.route('/update_address', methods=['POST'])
+def update_address():
+    # Get user from database using session['user_id']
+    user = User.query.get(session.get('user_id'))  # Fetch user by session user_id
+
+    if user:
+        # Update the user's address
+        user.address = request.form['address']
+        user.city = request.form['city']
+        user.state = request.form['state']
+        user.zip = request.form['zip']
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Flash a success message
+        flash('Address updated successfully!', 'success')
+    else:
+        flash('User not found!', 'danger')
+
+    # Redirect back to the cart page
+    return redirect(url_for('cart'))
+
+
 # View Cart Route
-@app.route("/cart")
+@app.route('/cart', methods=['GET', 'POST'])
+@role_required('buyer')
 def cart():
+    # Retrieve the current user's data (including their address) using session['user_id']
+    user = User.query.get(session.get('user_id'))  # Fetch user by session user_id
     cart = session.get("cart", {})
-    return render_template("cart.html", cart=cart)
+    if request.method == 'POST':
+        # Update address functionality
+        new_address = request.form['address']
+        if user:
+            user.address = new_address
+            db.session.commit()
+            flash('Address updated successfully!', 'success')
+        else:
+            flash('User not found!', 'danger')
+
+        return redirect(url_for('cart'))  # Redirect back to cart page after update
+
+    return render_template('cart.html', user=user,cart=cart)
 
 # Remove Item from Cart
 # Remove an item from the cart dynamically

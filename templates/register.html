@@ -7,7 +7,6 @@
     
     <!-- Include your CSS and other head elements -->
     {% include 'header.html' %}
-  
 </head>
 <body>
 
@@ -32,7 +31,6 @@
                 <select class="form-control" id="role" name="role" required>
                     <option value="buyer">Buyer</option>
                     <option value="seller">Seller</option>
-                    <!-- <option value="admin">admin</option> -->
                     <!-- <option value="admin">Admin</option> -->
                 </select>
             </div>
@@ -42,14 +40,35 @@
                 <input type="email" class="form-control" id="email" name="email">
             </div>
 
+            <!-- Address Fields -->
             <div class="form-group">
-                <label for="address">Address</label>
-                <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                <label for="name">Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address_line">Address Line</label>
+                <input type="text" class="form-control" id="address_line" name="address_line" required>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+
+            <div class="form-group">
+                <label for="zip_code">Zip Code</label>
+                <input type="text" class="form-control" id="zip_code" name="zip_code" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Create Account</button>
         </form>
     </div>
-
+{%include 'footer.html'%}
 </body>
 </html>

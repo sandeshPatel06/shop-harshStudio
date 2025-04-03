@@ -1,24 +1,21 @@
 <div class="container">
-  <h1>PHOTO FRAMES</h1>
+  <h1>Our Products</h1>
   <div id="messageBox" class="message-box"></div>
   <div class="row">
     {% if products %}
     {% for product in products %}
-    <div class="product-card">
-      <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}"
-        onclick="viewProductDetails('{{ product.id }}')" />
+    <div onclick="viewProductDetails('{{ product.id }}')" class="product-card">
+      <!-- <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" /> -->
       <h3>{{ product.name }}</h3>
       <p><strong>Price:</strong> ${{ product.price }}</p>
-      <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">
-        Add to Cart
-      </button>
+      <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
       <button class="btn buy-now"
-        onclick="buyNow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">
-        Buy Now
-      </button>
-      <button class="btn view-details" onclick="viewProductDetails('{{ product.id }}')">
-        View Details
-      </button>
+  data-product-id="{{ product.id }}"
+  data-product-name="{{ product.name }}"
+  data-product-price="{{ product.price }}"
+  onclick="buynow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">Buy Now</button>
+
+      <button class="btn view-details" onclick="viewProductDetails('{{ product.id }}')">View Details</button>
     </div>
     {% endfor %}
     {% else %}
@@ -27,28 +24,22 @@
   </div>
 </div>
 
-<script>
-// Function for the Buy Now button to redirect to checkout
-function buyNow(productId, productName, productPrice) {
-  // Save the product details to session via AJAX
-  fetch('/store_product_in_session', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      productId: productId,
-      productName: productName,
-      productPrice: productPrice,
-    }),
-  })
-  .then(response => {
-    if (response.ok) {
-      // After saving to session, redirect to checkout page
-      window.location.href = '/checkout';
-    } else {
-      alert('Failed to add product to cart');
-    }
-  });
-}
-</script>
+<!-- Product Details Modal -->
+<div id="productDetailsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="productDetailsContent"></div>
+    <button class="btn add-to-cart" onclick="addToCart(product.id)">Add to Cart</button>
+    <button class="btn buy-now" onclick="buyNow(product.id, product.name, product.price)">Buy Now</button>
+  </div>
+</div>
+
+<!-- Order Summary Modal -->
+<div id="orderSummaryModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeOrderSummaryModal()">&times;</span>
+    <h3>Order Summary</h3>
+    <div id="orderSummaryContent"></div>
+    <button class="btn" onclick="proceedToPayment()">Proceed to Payment</button>
+  </div>
+</div>
