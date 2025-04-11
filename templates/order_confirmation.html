@@ -5,47 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        h2 {
-            color: green;
-        }
-        .details {
-            text-align: left;
-            margin-top: 20px;
-        }
+        /* Removed custom CSS to use Bootstrap classes */
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>Order Placed Successfully! ✅</h2>
-        <p>Thank you, <strong>{{ name }}</strong>, for your order.</p>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="text-success">Order Placed Successfully! ✅</h2>
+                <p>Thank you, <strong>{{ name }}</strong>, for your order.</p>
 
-        <div class="details">
-            <h3>📦 Order Details:</h3>
-            <p><strong>Product Name:</strong> {{ product_name }}</p>
-            <p><strong>Product ID:</strong> {{ product_id }}</p>
-            <p><strong>Price:</strong> ₹{{ price }}</p>
-            <p><strong>Quantity:</strong> {{ quantity }}</p>
+                <div class="mt-4">
+                    <h3>📦 Order Details:</h3>
+                    <p><strong>Product Name:</strong> {{ product_name }}</p>
+                    <p><strong>Product ID:</strong> {{ product_id }}</p>
+                    <p><strong>Price:</strong> ₹{{ price }}</p>
+                    <p><strong>Quantity:</strong> {{ quantity }}</p>
 
-            <h3>📍 Shipping Address:</h3>
-            <p>{{ name }}</p>
-            <p>{{ address }}, {{ city }}, {{ state }} - {{ postal_code }}</p>
+                    <h3 class="mt-4">📍 Shipping Address:</h3>
+                    <p>{{ name }}</p>
+                    <p>{{ address }}, {{ city }}, {{ state }} - {{ postal_code }}</p>
+                </div>
+
+                <p class="mt-4"><strong>Next Step:</strong> Please complete your payment using UPI.</p>
+                <button onclick="history.back()" class="btn btn-secondary mt-3">Go Back</button>
+            </div>
         </div>
-
-        <p><strong>Next Step:</strong> Please complete your payment using UPI.</p>
-        <button onclick="history.back()">Go Back</button>
     </div>
 </body>
 </html>

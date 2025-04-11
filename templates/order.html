@@ -5,174 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Place Order</title>
     <style>
-        /* Reset some basic styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            padding: 20px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            font-size: 14px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        select, input[type="number"], textarea, input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        input[type="file"] {
-            padding: 6px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        small {
-            font-size: 12px;
-            color: #888;
-            display: block;
-            margin-top: 5px;
-        }
-
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-top: -15px;
-            margin-bottom: 15px;
-        }
-
-        .image-preview-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .image-preview {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
+        /* Removed custom CSS to use Bootstrap classes */
     </style>
 </head>
-<body>
+<body class="bg-light">
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Place Your Order</h2>
 
-    <h2>Place Your Order</h2>
-
-    <div class="form-container">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
         <form action="{{ url_for('place_order') }}" method="POST" enctype="multipart/form-data" id="order-form">
-            <!-- Choose Product -->
-            <label for="product">Choose Product:</label>
-            <select name="product" id="product" required>
-                <option value="1">Frame</option>
-                <option value="2">Poster</option>
-                <option value="3">Canvas Print</option>
-                <!-- Dynamically add products from your database if necessary -->
+          <!-- Choose Product -->
+          <div class="mb-3">
+            <label for="product" class="form-label">Choose Product:</label>
+            <select name="product" id="product" class="form-select" required>
+              <option value="1">Frame</option>
+              <option value="2">Poster</option>
+              <option value="3">Canvas Print</option>
+              <!-- Dynamically add products from your database if necessary -->
             </select>
+          </div>
 
-            <!-- Quantity Input -->
-            <label for="quantity">Quantity:</label>
-            <input type="number" name="quantity" id="quantity" min="1" required>
+          <!-- Quantity Input -->
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity:</label>
+            <input type="number" name="quantity" id="quantity" class="form-control" min="1" required>
+          </div>
 
-            <!-- Custom Instructions -->
-            <label for="custom_instructions">Custom Instructions:</label>
-            <textarea name="custom_instructions" id="custom_instructions" rows="4" placeholder="Add any special requests for the order (e.g., frame color, design etc.)"></textarea>
+          <!-- Custom Instructions -->
+          <div class="mb-3">
+            <label for="custom_instructions" class="form-label">Custom Instructions:</label>
+            <textarea name="custom_instructions" id="custom_instructions" class="form-control" rows="4" placeholder="Add any special requests for the order (e.g., frame color, design etc.)"></textarea>
+          </div>
 
-            <!-- Upload Images (minimum 8 images) -->
-            <label for="images">Upload Images (minimum 8 images):</label>
-            <input type="file" name="images" id="images" accept="image/*" multiple required>
-            <small>Maximum of 8 images are required. Please select at least 8 images to proceed.</small>
+          <!-- Upload Images (minimum 8 images) -->
+          <div class="mb-3">
+            <label for="images" class="form-label">Upload Images (minimum 8 images):</label>
+            <input type="file" name="images" id="images" class="form-control" accept="image/*" multiple required>
+            <small class="form-text text-muted">Maximum of 8 images are required. Please select at least 8 images to proceed.</small>
+          </div>
 
-            <!-- Image Preview -->
-            <div class="image-preview-container" id="image-preview-container"></div>
+          <!-- Image Preview -->
+          <div class="d-flex flex-wrap gap-2" id="image-preview-container"></div>
 
-            <!-- Submit Order -->
-            <button type="submit">Place Order</button>
+          <!-- Submit Order -->
+          <button type="submit" class="btn btn-primary w-100 mt-3">Place Order</button>
         </form>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Show image previews when files are selected
-        const imageInput = document.getElementById('images');
-        const previewContainer = document.getElementById('image-preview-container');
-        
-        imageInput.addEventListener('change', function() {
-            previewContainer.innerHTML = ''; // Clear the preview container
-            
-            const files = this.files;
-            
-            // Ensure at least 8 images are uploaded
-            if (files.length < 8) {
-                alert('Please upload at least 8 images.');
-            }
+  <script>
+    // Show image previews when files are selected
+    const imageInput = document.getElementById('images');
+    const previewContainer = document.getElementById('image-preview-container');
+    
+    imageInput.addEventListener('change', function() {
+      previewContainer.innerHTML = ''; // Clear the preview container
+      
+      const files = this.files;
+      
+      // Ensure at least 8 images are uploaded
+      if (files.length < 8) {
+        alert('Please upload at least 8 images.');
+      }
 
-            // Create image preview for each selected image
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = e.target.result;
-                    imgElement.classList.add('image-preview');
-                    previewContainer.appendChild(imgElement);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-
-        // Form submission validation to ensure at least 8 images are uploaded
-        document.getElementById('order-form').onsubmit = function(event) {
-            const fileList = imageInput.files;
-            if (fileList.length < 8) {
-                alert('You must upload at least 8 images.');
-                event.preventDefault();
-            }
+      // Create image preview for each selected image
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imgElement = document.createElement('img');
+          imgElement.src = e.target.result;
+          imgElement.classList.add('img-thumbnail');
+          imgElement.style.maxWidth = '100px';
+          previewContainer.appendChild(imgElement);
         };
-    </script>
+        reader.readAsDataURL(file);
+      });
+    });
 
+    // Form submission validation to ensure at least 8 images are uploaded
+    document.getElementById('order-form').onsubmit = function(event) {
+      const fileList = imageInput.files;
+      if (fileList.length < 8) {
+        alert('You must upload at least 8 images.');
+        event.preventDefault();
+      }
+    };
+  </script>
 </body>
 </html>

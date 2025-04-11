@@ -10,39 +10,42 @@ from functools import wraps
 from flask_migrate import Migrate
 from datetime import datetime
 from sqlalchemy.orm import joinedload
+from dotenv import load_dotenv
+import logging
+from logging.handlers import RotatingFileHandler
 
+# Load environment variables
+load_dotenv()
 
 # Initialize the Flask application
 app = Flask(__name__)
 
-# Secret key for session management (should be kept secret in production)
-app.secret_key = 'your_secret_key'
-
-
-
-# Configuration for file uploads
+# Configuration
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-# app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Use Gmail's SMTP server
-# app.config['MAIL_PORT'] = 587  # Gmail SMTP port
-# app.config['MAIL_USE_TLS'] = True  # Use TLS encryption
-# app.config['MAIL_USE_SSL'] = False
-# app.config['MAIL_USERNAME'] = ''  # Replace with your email
-# app.config['MAIL_PASSWORD'] = ''  # Replace with your email password
-# app.config['MAIL_DEFAULT_SENDER'] = 'patelbr5118s@gmail.com'  # Replace with your email
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-
-# Database path (Stored locally on PC)
+# Database configuration
 db_path = os.path.join(os.getcwd(), "product_management.db")
-
-# Configure SQLite database connection
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the SQLAlchemy database instance
+# Initialize extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Configure logging
+if not os.path.exists('logs'):
+    os.mkdir('logs')
+file_handler = RotatingFileHandler('logs/app.log', maxBytes=10240, backupCount=10)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+))
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info('Application startup')
 
 # Define the User model
 # Define the User model
@@ -147,9 +150,13 @@ def role_required(required_role):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if 'logged_in' not in session or session.get('role') != required_role:
-                # flash('Unauthorized Access!', 'error')
-                return redirect(url_for('login'),error_message='Unauthorized Access!')
+            if 'logged_in' not in session:
+                flash('Please log in to access this page.', 'warning')
+                return redirect(url_for('login'))
+            if session.get('role') != required_role:
+                flash('Unauthorized access. You do not have permission to view this page.', 'error')
+                app.logger.warning(f'Unauthorized access attempt by user {session.get("user_id")}')
+                return redirect(url_for('login'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -160,29 +167,34 @@ def contact():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+
+        if not username or not password:
+            flash('Please enter both username and password.', 'error')
+            return redirect(url_for('login'))
 
         user = User.query.filter_by(username=username).first()
+        
         if user and check_password_hash(user.password, password):
             session.permanent = True
             session['user_id'] = user.id
             session['role'] = user.role
-            session['logged_in'] = True  # Add this line if user present
+            session['logged_in'] = True
+            session['last_activity'] = datetime.utcnow()
 
-            flash("Login successful!", "success")
+            app.logger.info(f'User {username} logged in successfully')
+            flash('Login successful!', 'success')
 
-
-            # Redirect based on role
             if user.role == 'admin':
                 return redirect(url_for('admin_dashboard'))
             elif user.role == 'seller':
                 return redirect(url_for('seller_dashboard'))
             else:
                 return redirect(url_for('buyer_dashboard'))
-
         else:
-            flash("Unauthorized Access!", "error")
+            app.logger.warning(f'Failed login attempt for username: {username}')
+            flash('Invalid username or password.', 'error')
 
     return render_template('login.html')
 
@@ -414,7 +426,10 @@ def buyer_dashboard():
      return render_template('buyer_dashboard.html', products=products)
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)  # Remove user_id from session
+    if 'user_id' in session:
+        app.logger.info(f'User {session.get("user_id")} logged out')
+    session.clear()
+    flash('You have been logged out successfully.', 'info')
     return redirect(url_for('login'))  # Redirect to the login page
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -695,9 +710,26 @@ def clear_cart():
     session["cart"] = {}
     return jsonify({"success": True})
 
+# Enhanced error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('errors/500.html'), 500
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        # Implement password reset logic here
+        pass
+    return render_template('forgot_password.html')
+
 # Run the application
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True)
+    app.run(debug=False)
     
