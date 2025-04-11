@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create User</title>
     
-    <!-- Include your CSS and other head elements -->
+    
     {% include 'header.html' %}
 </head>
 <body>
@@ -15,7 +15,7 @@
     <div class="container">
         <h2>Create an Account</h2>
         
-        <form action="{{ url_for('create_user') }}" method="POST">
+        <form action="{{ url_for('register') }}" method="POST">
             <div class="form-group">
                 <label for="username">Mobile No. / Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>

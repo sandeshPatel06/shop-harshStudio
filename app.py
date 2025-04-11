@@ -8,7 +8,8 @@ import urllib.parse
 # from flask_mail import Mail, Message
 from functools import wraps
 from flask_migrate import Migrate
-
+from datetime import datetime
+from sqlalchemy.orm import joinedload
 
 
 # Initialize the Flask application
@@ -42,51 +43,96 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Define the User model for the database
-class Address(db.Model):
+
+# Define the User model
+# Define the User model
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), nullable=True)
+    role = db.Column(db.String(50), nullable=False)
+    
+    # Relationship with Address
+    address = db.relationship('Address', backref='user_address', uselist=False)
+
+    # Relationship with Order (Buyer)
+    orders = db.relationship('Order', back_populates='buyer')
+
+# Define the Address model
+class Address(db.Model):
+    __tablename__ = 'addresses'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Correct foreign key to 'user.id'
     address_line = db.Column(db.String(255), nullable=True)
     city = db.Column(db.String(100), nullable=True)
     state = db.Column(db.String(100), nullable=True)
     zip_code = db.Column(db.String(20), nullable=True)
 
-    # Relationship with User: one-to-one (each user has one address)
-    user = db.relationship('User', backref=db.backref('address', uselist=False))
+    # Relationship with User (backref should not conflict)
+    user = db.relationship('User', backref=db.backref('user_address', uselist=False))
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False)  # 'admin', 'seller', 'buyer'
-    email = db.Column(db.String(100), unique=True, nullable=True)
+    def __repr__(self):
+        return f'<Address {self.id}>'
 
-    orders = db.relationship('Order', backref='buyer', lazy=True)  # Relationship with Order
-
-
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    buyer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False, default=1)
-    status = db.Column(db.String(50), default="Processing")  # Order status (Processing, Shipped, Delivered)
-    date_ordered = db.Column(db.DateTime, default=db.func.current_timestamp())
-
-    product = db.relationship('Product', backref='orders')
-
-# Define the Product model for the database
+# Define the Product model
 class Product(db.Model):
+    __tablename__ = 'products'
+    
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    image_path = db.Column(db.String(255), nullable=True)
-    seller_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"), nullable=False)  
+    description = db.Column(db.String(500), nullable=True)
+    seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Correct foreign key to 'user.id'
+    # Add image_path column for storing the image path
+    image_path = db.Column(db.String(255), nullable=True)  # <-- Add this line
 
-    seller = db.relationship('User', backref=db.backref('products', lazy=True, cascade="all, delete"))
+    # Relationship with User (Seller)
+    seller = db.relationship('User', backref='products')
 
+    # Relationship with Order
+    orders = db.relationship('Order', back_populates='product')
 
+    def __repr__(self):
+        return f'<Product {self.name}>'
+
+# Define the Order model
+class Order(db.Model):
+    __tablename__ = 'orders'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    buyer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Foreign key to 'user.id'
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'))  # Foreign key to 'products.id'
+    quantity = db.Column(db.Integer)
+    status = db.Column(db.String(50))
+    date_ordered = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Custom instructions column
+    custom_instructions = db.Column(db.String(255), nullable=True)
+
+    # Relationships
+    product = db.relationship('Product', back_populates='orders')
+    buyer = db.relationship('User', back_populates='orders')  # Link back to User
+    order_images = db.relationship('OrderImage', back_populates='order', cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f'<Order {self.id}>'
+
+# Define the OrderImage model
+class OrderImage(db.Model):
+    __tablename__ = 'order_images'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    image_filename = db.Column(db.String(255), nullable=False)
+    image_path = db.Column(db.String(255), nullable=True) 
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+
+    # Relationship with Order
+    order = db.relationship('Order', back_populates='order_images')
+
+    def __repr__(self):
+        return f'<OrderImage {self.id}>'
 # Create database tables if they don't exist
 with app.app_context():
     db.create_all()
@@ -149,6 +195,53 @@ def store_product_in_session():
     session['product_price'] = data['price']
     return jsonify({'success': True}), 200
 
+
+@app.route('/place_order', methods=['GET', 'POST'])
+def place_order():
+    if request.method == 'POST':
+        # Get the data from the form
+        product_id = request.form['product']
+        quantity = request.form['quantity']
+        custom_instructions = request.form['custom_instructions']
+        
+        # Assume user and product information is valid and exists
+        user_id = 1  # Example user id
+        
+        # Create the Order
+        order = Order(buyer_id=user_id, product_id=product_id, quantity=quantity, status="Processing")
+        db.session.add(order)
+        db.session.commit()  # Save order to the database
+
+        # Handle image uploads
+        if 'images' not in request.files:
+            flash('No images part')
+            return redirect(request.url)
+        
+        images = request.files.getlist('images')  # Get the list of uploaded files
+
+        for image in images:
+            if image and allowed_file(image.filename):
+                filename = secure_filename(image.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image.save(filepath)
+
+                # Save the image details to the database
+                order_image = OrderImage(order_id=order.id, image_path=filepath)
+                db.session.add(order_image)
+
+        db.session.commit()  # Commit the images to the database
+        flash('Order placed successfully')
+        return redirect(url_for('success'))  # Redirect to a success page (implement as necessary)
+
+
+
+    return render_template('order.html')
+
+@app.route('/success')
+def success():
+    return render_template('success.html')  # or whatever success page you want
+
+
 @app.route('/checkout', methods=['GET', 'POST'])
 @role_required('buyer')
 def checkout():
@@ -197,7 +290,7 @@ def checkout():
             return redirect(url_for('checkout'))  # Redirect back to checkout page
 
     # Render the checkout page with product details
-    return render_template('checkout.html', 
+    return render_template('order.html', 
                            product_name=product_name, 
                            product_price=product_price)
 
@@ -236,13 +329,19 @@ def admin_orders():
     return render_template('admin_orders.html', orders=orders)
 
 @app.route('/seller/orders')
-@role_required('seller')  # Ensure the user is a seller
+@role_required('seller')
 def seller_orders():
     seller_id = session.get('user_id')
-    orders = Order.query.join(Product).filter(Product.seller_id == seller_id).all()  # Filter by seller ID
+    
+    # Explicitly specify the base table (Order) and join conditions
+    orders = (db.session.query(Order)
+              .select_from(Order)
+              .join(Product, Product.id == Order.product_id)  # Join condition between Order and Product
+              .options(joinedload(Order.order_images))  # Eager load the order_images relationship
+              .filter(Product.seller_id == seller_id)  # Filter by the seller's ID
+              .all())
+    
     return render_template('seller_orders.html', orders=orders)
-
-
 @app.route('/manage_users')
 def manage_users():
     users = User.query.all()  # Fetch all users
@@ -341,42 +440,41 @@ def order_history():
 
 
 # Create admin user route
-@app.route('/create_user', methods=['GET', 'POST'])
-def create_user():
+@app.route('/register', methods=['GET', 'POST'])
+def register():
     if request.method == 'POST':
         # Get data from the form
         username = request.form['username']
-        password = generate_password_hash(request.form['password'])  # Hash the password
-        role = request.form['role']  # Get role from form (admin, seller, buyer)
-        email = request.form.get('email')  # Optional field
+        password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
+        role = request.form['role']
+        email = request.form['email']
         name = request.form['name']
         address_line = request.form['address_line']
         city = request.form['city']
         state = request.form['state']
         zip_code = request.form['zip_code']
-
-        # Create a new User object
-        new_user = User(
-            username=username,
-            password=password,
-            role=role,
-            email=email,
-            name=name,
-            address_line=address_line,
-            city=city,
-            state=state,
-            zip_code=zip_code
+        
+        # Create a new user object
+        new_user = User(username=username, password=password, role=role, email=email)
+        
+        # Create the user's address
+        new_address = Address(
+            address_line=address_line, 
+            city=city, 
+            state=state, 
+            zip_code=zip_code,
+            user=new_user  # Link the address to the user
         )
-
-        # Add user to the database
+        
+        # Add user and address to the session and commit to the database
         db.session.add(new_user)
+        db.session.add(new_address)
         db.session.commit()
-
-        flash('New user created successfully!', 'success')
-        return redirect(url_for('login'))  # Redirect to login page after creation
-
+        
+        # Redirect to login page (or any other page you'd like after registration)
+        return redirect(url_for('login'))  
+    
     return render_template('register.html')
-
 
 # Add product route
 @app.route('/add_product', methods=['GET', 'POST'])
@@ -433,11 +531,28 @@ def product_details(product_id):
 
 
 @app.route('/manage_products')
-@role_required(['admin', 'seller'])  # Allows access for both admin and seller roles
+@role_required(['admin', 'seller'])
 def manage_products():
-    products = Product.query.all()  # Get all products
+    # Get all products
+    products = Product.query.all()
     user_role = get_current_user_role()  # Get the role of the current user
-    return render_template('manage_products.html', products=products, user_role=user_role)
+    
+    # For each product, we need to get the orders and the images associated with them
+    product_images = {}
+    for product in products:
+        # Get all orders that are associated with the current product
+        orders = Order.query.filter(Order.product_id == product.id).all()
+
+        # Get the images associated with the order (images uploaded by the buyer)
+        order_images = []
+        for order in orders:
+            for image in order.order_images:  # Assuming order_images is the relationship holding the images
+                order_images.append(image.image_filename)
+        
+        product_images[product.id] = order_images
+    
+    return render_template('manage_products.html', products=products, user_role=user_role, product_images=product_images)
+
 @app.route('/user/delete_product/<int:product_id>', methods=['POST'])
 @role_required(['admin', 'seller'])  # Allow both admin and seller roles
 def delete_product(product_id):
