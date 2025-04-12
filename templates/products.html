@@ -5,7 +5,7 @@
     {% if products %}
     {% for product in products %}
     <div onclick="viewProductDetails('{{ product.id }}')" class="product-card">
-      <!-- <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" /> -->
+      <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" />
       <h3>{{ product.name }}</h3>
       <p><strong>Price:</strong> ${{ product.price }}</p>
       <button class="btn add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>

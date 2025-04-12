@@ -13,6 +13,7 @@ from sqlalchemy.orm import joinedload
 from dotenv import load_dotenv
 import logging
 from logging.handlers import RotatingFileHandler
+from flask_bcrypt import Bcrypt
 
 # Load environment variables
 load_dotenv()
@@ -34,6 +35,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# Initialize Bcrypt
+bcrypt = Bcrypt(app)
+
+# Update Flask configuration for secure sessions
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 # Configure logging
 if not os.path.exists('logs'):
@@ -90,6 +98,8 @@ class Product(db.Model):
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Correct foreign key to 'user.id'
     # Add image_path column for storing the image path
     image_path = db.Column(db.String(255), nullable=True)  # <-- Add this line
+    # Add category column for categorizing products
+    category = db.Column(db.String(100), nullable=True)  # <-- Add this line
 
     # Relationship with User (Seller)
     seller = db.relationship('User', backref='products')
@@ -136,6 +146,25 @@ class OrderImage(db.Model):
 
     def __repr__(self):
         return f'<OrderImage {self.id}>'
+
+# Define the Review model
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.String(500), nullable=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    product = db.relationship('Product', backref='reviews')
+    user = db.relationship('User', backref='reviews')
+
+    def __repr__(self):
+        return f'<Review {self.id}>'
+
 # Create database tables if they don't exist
 with app.app_context():
     db.create_all()
@@ -520,7 +549,8 @@ def add_product():
 # Public homepage displaying all products
 @app.route('/')
 def public_page():
-    products = Product.query.all()  # Fetch all products
+    query = request.args.get('query', '')
+    products = Product.query.filter(Product.name.ilike(f'%{query}%')).all() if query else Product.query.all()
     return render_template('index.html', products=products)
 # View product details
 @app.route('/product/<int:product_id>')
@@ -727,9 +757,16 @@ def forgot_password():
         pass
     return render_template('forgot_password.html')
 
+# Add a search route
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query', '')
+    products = Product.query.filter(Product.name.ilike(f'%{query}%')).all()
+    return render_template('index.html', products=products)
+
 # Run the application
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=False)
+    app.run(host='0.0.0.0',debug=True)
     

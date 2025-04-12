@@ -1,4 +1,4 @@
-# Shop Harsh Studio - E-commerce Platform
+# MOTION_MART - E-commerce Platform
 
 A professional e-commerce platform built with Flask, featuring user roles (admin, seller, buyer), product management, order processing, and secure authentication.
 
