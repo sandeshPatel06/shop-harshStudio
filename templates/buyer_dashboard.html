@@ -38,7 +38,7 @@
           <div class="card h-100">
             <div class="card-body">
               <h3 class="card-title">{{ product.name }}</h3>
-              <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
+              <p class="card-text"><strong>Price:</strong> {{ product.price }}</p>
               <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
               <button class="btn btn-primary" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" onclick="buynow('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')">Buy Now</button>
               <button class="btn btn-info" onclick="viewProductDetails('{{ product.id }}')">View Details</button>

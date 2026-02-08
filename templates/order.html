@@ -42,7 +42,8 @@
           <div class="mb-3">
             <label for="images" class="form-label">Upload Images (minimum 8 images):</label>
             <input type="file" name="images" id="images" class="form-control" accept="image/*" multiple required>
-            <small class="form-text text-muted">Maximum of 8 images are required. Please select at least 8 images to proceed.</small>
+            <div class="invalid-feedback">Please select at least 8 images.</div>
+            <small class="form-text text-muted">Select a minimum of 8 images in PNG, JPG, or JPEG format.</small>
           </div>
 
           <!-- Image Preview -->
@@ -92,6 +93,14 @@
         event.preventDefault();
       }
     };
+
+    document.getElementById('order-form').addEventListener('submit', function(e) {
+      const files = document.getElementById('images').files;
+      if (files.length < 8) {
+        e.preventDefault();
+        alert('Please select at least 8 images');
+      }
+    });
   </script>
 </body>
 </html>

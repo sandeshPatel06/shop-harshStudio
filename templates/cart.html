@@ -30,14 +30,18 @@
               {% for product_id, item in cart.items() %}
               <tr>
                 <td>{{ item.name }}</td>
-                <td>${{ item.price }}</td>
+                <td>₹{{ item.price }}</td>
                 <td>{{ item.quantity }}</td>
-                <td>${{ item.price * item.quantity }}</td>
+                <td>₹{{ "%.2f"|format(item.price * item.quantity) }}</td>
                 <td>
                   <button onclick="removeFromCart('{{ product_id }}')" class="btn btn-danger btn-sm">Remove</button>
                 </td>
               </tr>
               {% endfor %}
+              <tr class="table-active">
+                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                <td colspan="2">₹{{ "%.2f"|format(cart.values()|sum(attribute='price')) }}</td>
+              </tr>
             </tbody>
           </table>
 

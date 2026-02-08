@@ -1,45 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      {% include 'header.html' %}
-      <style></style>
-    </head>
-    <style></style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Add a new product to Motion Mart" />
+    {% include 'header.html' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='add_product.css') }}">
   </head>
 
   <body>
     {% include 'navbar.html'%}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            const feedback = document.getElementById('formFeedback');
+            feedback.innerHTML = "{{ message }}";
+            feedback.className = "form-feedback {{ 'success' if category == 'success' else 'error' }}";
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
     <div class="container">
-      <h2>Add Product</h2>
-      <form action="/add_product" method="post" enctype="multipart/form-data">
+      <h1 class="page-title">Add New Product</h1>
+      
+      <!-- Form feedback message -->
+      <div id="formFeedback" class="form-feedback"></div>
+      
+      <form id="addProductForm" action="{{ url_for('add_product') }}" method="post" enctype="multipart/form-data">
         <div class="form-group">
-          <label for="name">Product Name:</label>
-          <input type="text" id="name" name="name" required />
+          <label for="name">Product Name</label>
+          <input type="text" id="name" name="name" class="form-control" required />
         </div>
+        
         <div class="form-group">
-          <label for="price">Price:</label>
-          <input type="number" id="price" name="price" required />
+          <label for="price">Price (₹)</label>
+          <input type="number" id="price" name="price" class="form-control" min="0" step="0.01" required />
         </div>
+        
         <div class="form-group">
-          <label for="description">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            rows="3"
-            required
-          ></textarea>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
         </div>
+        
         <div class="form-group">
-          <label for="image">Image:</label>
-          <input type="file" id="image" name="file" required />
+          <label for="image">Product Image</label>
+          <div class="file-input-wrapper">
+            <label for="image" class="file-input-label">
+              <span>Choose a file or drag it here</span>
+            </label>
+            <input type="file" id="image" name="file" class="file-input" accept="image/*" required />
+          </div>
+          <div id="fileName" class="file-name"></div>
+          
+          <!-- Image preview area -->
+          <div id="imagePreview" class="image-preview">
+            <img id="previewImg" src="#" alt="Preview" />
+          </div>
         </div>
-        <button type="submit" class="btn">Submit</button>
+        
+        <button type="submit" class="btn-submit">Add Product</button>
       </form>
     </div>
+    
     {% include 'footer.html'%}
+    
+    <script>
+      // Show file name when selected
+      document.getElementById('image').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+        document.getElementById('fileName').textContent = fileName;
+        
+        // Show image preview
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          
+          reader.onload = function(event) {
+            document.getElementById('previewImg').src = event.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+          }
+          
+          reader.readAsDataURL(e.target.files[0]);
+        }
+      });
+      
+      // Form submission with feedback
+      document.getElementById('addProductForm').addEventListener('submit', function(e) {
+        // You can add client-side validation here if needed
+      });
+      
+      // Show feedback if there's a Flask message
+      <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            const feedback = document.getElementById('formFeedback');
+            feedback.innerHTML = "{{ message }}";
+            feedback.className = "form-feedback {{ 'success' if category == 'success' else 'error' }}";
+          {% endfor %}
+        {% endif %}
+      {% endwith %} -->
+    </script>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </html>

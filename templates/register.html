@@ -6,95 +6,99 @@
     <title>Register - MOTION_MART</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        /* Removed custom CSS to use Bootstrap classes */
-    </style>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px;">
             <div class="card-header text-center bg-transparent">
-                <i class="bi bi-shop logo text-primary"></i>
+                <i class="bi bi-shop display-4 text-primary"></i>
                 <h2 class="mt-3">Create Account</h2>
-                <p class="text-muted">Join MOTION_MART today</p>
             </div>
             <div class="card-body p-4">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            <div class="alert alert-{{ category }} alert-dismissible fade show">
                                 {{ message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                
+
                 <form method="POST" action="{{ url_for('register') }}" class="needs-validation" novalidate>
+                    <!-- Basic Information -->
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-person"></i></span>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                        <input type="text" class="form-control" id="username" name="username" required 
+                               minlength="3" maxlength="50" pattern="[a-zA-Z0-9_-]+">
+                        <div class="invalid-feedback">
+                            Username must be 3-50 characters long and contain only letters, numbers, underscores, and hyphens.
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="invalid-feedback">
+                            Please enter a valid email address.
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                        <div class="password-strength mt-2"></div>
+                        <small class="form-text text-muted">
+                            Must be at least 8 characters long and include uppercase, lowercase, and numbers.
+                        </small>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div class="mb-3">
+                        <label for="address_line" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address_line" name="address_line">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city">
                         </div>
-                        <div class="password-strength" id="passwordStrength"></div>
-                        <div class="password-requirements">
-                            <small>Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters.</small>
+                        <div class="col-md-6 mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="state" name="state">
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <label for="zip_code" class="form-label">ZIP Code</label>
+                        <input type="text" class="form-control" id="zip_code" name="zip_code" 
+                               pattern="[0-9]{6}">
+                        <div class="invalid-feedback">
+                            Please enter a valid 6-digit ZIP code.
                         </div>
                     </div>
 
+                    <!-- Role Selection -->
                     <div class="mb-3">
-                        <label class="form-label">Select Role</label>
-                        <div class="d-flex gap-3">
-                            <div class="role-option flex-fill text-center p-3 border rounded cursor-pointer" data-role="buyer">
-                                <i class="bi bi-cart"></i>
-                                <p class="mb-0">Buyer</p>
-                            </div>
-                            <div class="role-option flex-fill text-center p-3 border rounded cursor-pointer" data-role="seller">
-                                <i class="bi bi-shop"></i>
-                                <p class="mb-0">Seller</p>
-                            </div>
+                        <label class="form-label d-block">Select Role</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="role" id="buyer" value="buyer" checked>
+                            <label class="btn btn-outline-primary" for="buyer">Buyer</label>
+
+                            <input type="radio" class="btn-check" name="role" id="seller" value="seller">
+                            <label class="btn btn-outline-primary" for="seller">Seller</label>
                         </div>
-                        <input type="hidden" name="role" id="role" value="buyer">
                     </div>
 
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="terms" required>
-                        <label class="form-check-label" for="terms">
-                            I agree to the <a href="#" class="text-primary">Terms and Conditions</a>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-person-plus"></i> Create Account
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        Create Account
                     </button>
                 </form>
 
-                <div class="text-center mt-4">
+                <div class="text-center mt-3">
                     <p class="mb-0">Already have an account? 
                         <a href="{{ url_for('login') }}" class="text-primary">Login here</a>
                     </p>
@@ -103,34 +107,29 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Role selection
-        document.querySelectorAll('.role-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('role').value = this.dataset.role;
-            });
-        });
+        // Form validation
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
 
         // Password strength indicator
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            const strength = calculatePasswordStrength(password);
-            const strengthBar = document.getElementById('passwordStrength');
-            
-            strengthBar.style.width = strength + '%';
-            if (strength < 25) {
-                strengthBar.style.backgroundColor = '#dc3545';
-            } else if (strength < 50) {
-                strengthBar.style.backgroundColor = '#ffc107';
-            } else if (strength < 75) {
-                strengthBar.style.backgroundColor = '#0dcaf0';
-            } else {
-                strengthBar.style.backgroundColor = '#198754';
-            }
+        const password = document.getElementById('password');
+        const strengthBar = document.querySelector('.password-strength');
+        
+        password.addEventListener('input', function() {
+            const strength = calculatePasswordStrength(this.value);
+            updateStrengthBar(strength);
         });
 
         function calculatePasswordStrength(password) {
@@ -140,6 +139,17 @@
             if (/[0-9]/.test(password)) strength += 25;
             if (/[^A-Za-z0-9]/.test(password)) strength += 25;
             return strength;
+        }
+
+        function updateStrengthBar(strength) {
+            strengthBar.style.width = strength + '%';
+            strengthBar.style.height = '5px';
+            strengthBar.style.transition = 'all 0.3s';
+            
+            if (strength < 25) strengthBar.style.backgroundColor = '#dc3545';
+            else if (strength < 50) strengthBar.style.backgroundColor = '#ffc107';
+            else if (strength < 75) strengthBar.style.backgroundColor = '#0dcaf0';
+            else strengthBar.style.backgroundColor = '#198754';
         }
     </script>
 </body>

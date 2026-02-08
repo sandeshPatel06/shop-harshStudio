@@ -12,7 +12,12 @@
 
     <div class="mb-3">
         <label class="form-label">Address:</label>
-        <textarea name="address" class="form-control">{{ user.address }}</textarea>
+        <div class="address-details">
+            <input type="text" name="address_line" value="{{ user.address.address_line if user.address else '' }}" class="form-control mb-2" placeholder="Street Address">
+            <input type="text" name="city" value="{{ user.address.city if user.address else '' }}" class="form-control mb-2" placeholder="City">
+            <input type="text" name="state" value="{{ user.address.state if user.address else '' }}" class="form-control mb-2" placeholder="State">
+            <input type="text" name="zip_code" value="{{ user.address.zip_code if user.address else '' }}" class="form-control" placeholder="ZIP Code">
+        </div>
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Save Changes</button>

@@ -4,22 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Link to your main style.css (assuming it has base styles) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> 
+    <!-- Link to specific styles for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='seller_dashboard.css') }}">
 </head>
-<body>{% include 'navbar.html' %} 
-    <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand ms-3" href="#">Seller Dashboard</a>
-        <a class="btn btn-danger me-3" href="{{ url_for('logout') }}">Logout</a>
-    </nav>
+<body>
+    {% include 'navbar.html' %} 
 
-    <div class="container mt-4">
+    <div class="dashboard-container">
         <h2>Welcome, Seller!</h2>
         <p>Manage your products below.</p>
         
-        <a href="{{ url_for('add_product') }}" class="btn btn-success">Add New Product</a>
-        <a href="{{ url_for('seller_view_products') }}" class="btn btn-info">View My Products</a>
-        <a href="{{ url_for('seller_orders') }}" class="btn btn-primary">Manage Orders</a>
+        <a href="{{ url_for('add_product') }}" class="btn btn-add">Add New Product</a>
+        <a href="{{ url_for('seller_view_products') }}" class="btn btn-view">View My Products</a>
+        <a href="{{ url_for('seller_orders') }}" class="btn btn-manage">Manage Orders</a>
 
     </div>
 </body>

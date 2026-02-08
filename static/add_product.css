@@ -1,0 +1,200 @@
+/* Enhanced Add Product Page Styles for Motion Mart */
+
+/* Container styles */
+.container {
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Page heading */
+  .page-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #1a2238;
+    font-size: 2rem;
+    font-weight: 700;
+    position: relative;
+  }
+  
+  .page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background-color: #ff6a3d;
+    border-radius: 2px;
+  }
+  
+  /* Form groups */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2238;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Form inputs */
+  .form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: #1a2238;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(26, 34, 56, 0.1);
+  }
+  
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  /* File input styling */
+  .file-input-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+  
+  .file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: #f8f9fa;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  
+  .file-input-label:hover {
+    border-color: #1a2238;
+    background-color: #f0f0f0;
+  }
+  
+  .file-input-label span {
+    margin-left: 8px;
+  }
+  
+  .file-input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  
+  .file-name {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+  }
+  
+  /* Submit button */
+  .btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background-color: #ff6a3d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+  
+  .btn-submit:hover {
+    background-color: #e85a2d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+  
+  /* Form feedback */
+  .form-feedback {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    display: none;
+  }
+  
+  .form-feedback.success {
+    display: block;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .form-feedback.error {
+    display: block;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  /* Image preview */
+  .image-preview {
+    width: 100%;
+    margin-top: 1rem;
+    text-align: center;
+    display: none;
+  }
+  
+  .image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .container {
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      margin: 1rem;
+      padding: 1.2rem;
+    }
+    
+    .btn-submit {
+      padding: 0.8rem;
+    }
+  }

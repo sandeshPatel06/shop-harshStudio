@@ -65,7 +65,7 @@ class User(db.Model):
     role = db.Column(db.String(50), nullable=False)
     
     # Relationship with Address
-    address = db.relationship('Address', backref='user_address', uselist=False)
+    address = db.relationship('Address', back_populates='user', uselist=False, cascade="all, delete-orphan")
 
     # Relationship with Order (Buyer)
     orders = db.relationship('Order', back_populates='buyer')
@@ -82,7 +82,7 @@ class Address(db.Model):
     zip_code = db.Column(db.String(20), nullable=True)
 
     # Relationship with User (backref should not conflict)
-    user = db.relationship('User', backref=db.backref('user_address', uselist=False))
+    user = db.relationship('User', back_populates='address')
 
     def __repr__(self):
         return f'<Address {self.id}>'
@@ -210,7 +210,7 @@ def login():
             session['user_id'] = user.id
             session['role'] = user.role
             session['logged_in'] = True
-            session['last_activity'] = datetime.utcnow()
+            
 
             app.logger.info(f'User {username} logged in successfully')
             flash('Login successful!', 'success')
@@ -487,37 +487,58 @@ def order_history():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        # Get data from the form
-        username = request.form['username']
-        password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
-        role = request.form['role']
-        email = request.form['email']
-        name = request.form['name']
-        address_line = request.form['address_line']
-        city = request.form['city']
-        state = request.form['state']
-        zip_code = request.form['zip_code']
-        
-        # Create a new user object
-        new_user = User(username=username, password=password, role=role, email=email)
-        
-        # Create the user's address
-        new_address = Address(
-            address_line=address_line, 
-            city=city, 
-            state=state, 
-            zip_code=zip_code,
-            user=new_user  # Link the address to the user
-        )
-        
-        # Add user and address to the session and commit to the database
-        db.session.add(new_user)
-        db.session.add(new_address)
-        db.session.commit()
-        
-        # Redirect to login page (or any other page you'd like after registration)
-        return redirect(url_for('login'))  
-    
+        try:
+            # Get form data
+            username = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            role = request.form['role']
+            
+            # Validate password
+            if len(password) < 8:
+                flash('Password must be at least 8 characters long', 'danger')
+                return redirect(url_for('register'))
+
+            # Check if username already exists
+            if User.query.filter_by(username=username).first():
+                flash('Username already exists', 'danger')
+                return redirect(url_for('register'))
+
+            # Hash password
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+            
+            # Create new user
+            new_user = User(
+                username=username,
+                password=hashed_password,
+                email=email,
+                role=role
+            )
+            
+            # Add address information if provided
+            address_data = {
+                'address_line': request.form.get('address_line', ''),
+                'city': request.form.get('city', ''),
+                'state': request.form.get('state', ''),
+                'zip_code': request.form.get('zip_code', '')
+            }
+            
+            if any(address_data.values()):
+                new_address = Address(**address_data)
+                new_user.address = new_address
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash('Registration successful! Please login.', 'success')
+            return redirect(url_for('login'))
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f'Registration error: {str(e)}')
+            flash('An error occurred during registration', 'danger')
+            return redirect(url_for('register'))
+
     return render_template('register.html')
 
 # Add product route
@@ -768,5 +789,4 @@ def search():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=False)
-    
+    app.run(host='0.0.0.0',debug=True)
